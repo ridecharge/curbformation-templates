@@ -1,0 +1,212 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": " v1.0 Creates an Autoscaling HA pair of Instances for a Service",
+  "Parameters": {
+    "Environment": {
+      "Description": "Name of the environment to launch services into.",
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "8",
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    },
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Description": "Instance type for instance pair.",
+      "Type": "String",
+      "Default": "m3.medium",
+      "AllowedValues": [
+        "c4.large",
+        "m3.medium"
+      ],
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+    "SecurityGroups": {
+      "Description": "Security Groups for the instances",
+      "Type": "CommaDelimitedList"
+    },
+    "InstanceProfile": {
+      "Description": "IAM Instance Profile for instances",
+      "Type": "String"
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Type": "CommaDelimitedList"
+    },
+    "Subnets": {
+      "Description": "Subnets to launch NATs into.",
+      "Type": "List<AWS::EC2::Subnet::Id>"
+    },
+    "ImageId": {
+      "Description": "AMI to create instances.",
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    },
+    "UserData": {
+      "Description": "Userdata to pass to instance startup.",
+      "Type": "String",
+      "Default": ""
+    },
+    "Scheme": {
+      "Type": "String",
+      "AllowedValues": [
+        "internal",
+        "internet-facing"
+      ]
+    }
+  },
+  "Resources": {
+    "LoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "SecurityGroups": {
+          "Ref": "SecurityGroups"
+        },
+        "Scheme": {
+          "Ref": "Scheme"
+        },
+        "Subnets": {
+          "Ref": "Subnets"
+        },
+        "HealthCheck": {
+          "HealthyThreshold": "5",
+          "Interval": "10",
+          "Target": "tcp:8080",
+          "Timeout": "5",
+          "UnhealthyThreshold": "3"
+        },
+        "Listeners": [
+          {
+            "InstancePort": "8080",
+            "InstanceProtocol": "HTTP",
+            "LoadBalancerPort": "80",
+            "Protocol": "HTTP"
+          }
+        ],
+        "LoadBalancerName": {
+          "Fn::Join": [
+            "-",
+            [
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "ApplicationName"
+              }
+            ]
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Role",
+            "Value": "Application"
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "ApplicationName"
+            }
+          }
+        ]
+      }
+    },
+    "AsgLaunchConfiguration": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "EbsOptimized": false,
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        "ImageId": {
+          "Ref": "ImageId"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "KeyName": {
+          "Ref": "Environment"
+        },
+        "SecurityGroups": {
+          "Ref": "SecurityGroups"
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Ref": "UserData"
+          }
+        }
+      }
+    },
+    "AutoScalingGroup": {
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "1",
+          "MaxBatchSize": "1",
+          "PauseTime": "PT3M30S"
+        }
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "AvailabilityZones": {
+          "Ref": "AvailabilityZones"
+        },
+        "LoadBalancerNames": [
+          {
+            "Ref":"LoadBalancer"
+          }
+        ],
+        "Cooldown": "30",
+        "DesiredCapacity": "2",
+        "HealthCheckGracePeriod": "30",
+        "HealthCheckType": "ELB",
+        "LaunchConfigurationName": {
+          "Ref": "AsgLaunchConfiguration"
+        },
+        "MaxSize": "2",
+        "MinSize": "2",
+        "VPCZoneIdentifier": {
+          "Ref": "Subnets"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  {
+                    "Ref": "Environment"
+                  },
+                  {
+                    "Ref": "ApplicationName"
+                  }
+                ]
+              ]
+            },
+            "PropagateAtLaunch": "true"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            },
+            "PropagateAtLaunch": "true"
+          },
+          {
+            "Key": "Role",
+            "Value": "Application",
+            "PropagateAtLaunch": "true"
+          }
+        ]
+      }
+    }
+  }
+}

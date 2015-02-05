@@ -12,10 +12,60 @@
     },
     "ApplicationName": {
       "Type": "String"
+    },
+    "BucketTypes": {
+      "Type": "String",
+      "Default": "both",
+      "AllowedValues": [
+        "both",
+        "private",
+        "public"
+      ]
+    }
+  },
+  "Conditions": {
+    "CreateBothBuckets": {
+      "Fn::Equals": [
+        {
+          "Ref": "BucketTypes"
+        },
+        "both"
+      ]
+    },
+    "CreatePublicBucket": {
+      "Fn::Or": [
+        {
+          "Condition": "CreateBothBuckets"
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "BucketTypes"
+            },
+            "public"
+          ]
+        }
+      ]
+    },
+    "CreatePrivateBucket": {
+      "Fn::Or": [
+        {
+          "Condition": "CreateBothBuckets"
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "BucketTypes"
+            },
+            "private"
+          ]
+        }
+      ]
     }
   },
   "Outputs": {
     "PublicBucket": {
+      "Condition": "CreatePublicBucket",
       "Value": {
         "Fn::GetAtt": [
           "PublicBucket",
@@ -24,6 +74,7 @@
       }
     },
     "PrivateBucket": {
+      "Condition": "CreatePrivateBucket",
       "Value": {
         "Fn::GetAtt": [
           "PublicBucket",
@@ -41,8 +92,12 @@
           "Fn::Join": [
             "-",
             [
-              {"Ref": "Environment"},
-              {"Ref": "ApplicationName"},
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "ApplicationName"
+              },
               "logs"
             ]
           ]
@@ -50,29 +105,38 @@
         "Tags": [
           {
             "Key": "Application",
-            "Value": {"Ref": "ApplicationName"}
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           },
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Role",
-            "Value": "aws-logs"
+            "Value": "Logs"
           }
         ]
       }
     },
     "PublicBucket": {
+      "Condition": "CreatePublicBucket",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
           },
-          "ApplicationName": {"Ref": "ApplicationName"},
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
           "AccessType": "public",
-          "LogBucket": {"Ref": "LogBucket"}
+          "LogBucket": {
+            "Ref": "LogBucket"
+          }
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -90,13 +154,20 @@
       }
     },
     "PrivateBucket": {
+      "Condition": "CreatePrivateBucket",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
-          "Environment": {"Ref": "Environment"},
-          "ApplicationName": {"Ref": "ApplicationName"},
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
           "AccessType": "private",
-          "LogBucket": {"Ref": "LogBucket"}
+          "LogBucket": {
+            "Ref": "LogBucket"
+          }
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -115,4 +186,3 @@
     }
   }
 }
-

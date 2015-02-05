@@ -71,7 +71,7 @@
           },
           {
             "Key": "Role",
-            "Value": "app-storage"
+            "Value": "Storage"
           },
           {
             "Key": "Access",
