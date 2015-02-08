@@ -13,59 +13,13 @@
     "ApplicationName": {
       "Type": "String"
     },
-    "BucketTypes": {
-      "Type": "String",
-      "Default": "both",
-      "AllowedValues": [
-        "both",
-        "private",
-        "public"
-      ]
-    }
-  },
-  "Conditions": {
-    "CreateBothBuckets": {
-      "Fn::Equals": [
-        {
-          "Ref": "BucketTypes"
-        },
-        "both"
-      ]
-    },
-    "CreatePublicBucket": {
-      "Fn::Or": [
-        {
-          "Condition": "CreateBothBuckets"
-        },
-        {
-          "Fn::Equals": [
-            {
-              "Ref": "BucketTypes"
-            },
-            "public"
-          ]
-        }
-      ]
-    },
-    "CreatePrivateBucket": {
-      "Fn::Or": [
-        {
-          "Condition": "CreateBothBuckets"
-        },
-        {
-          "Fn::Equals": [
-            {
-              "Ref": "BucketTypes"
-            },
-            "private"
-          ]
-        }
-      ]
+    "TemplateURLPrefix": {
+      "Description": "Template URL prefix for nested stacks.",
+      "Type": "String"
     }
   },
   "Outputs": {
     "PublicBucket": {
-      "Condition": "CreatePublicBucket",
       "Value": {
         "Fn::GetAtt": [
           "PublicBucket",
@@ -74,7 +28,6 @@
       }
     },
     "PrivateBucket": {
-      "Condition": "CreatePrivateBucket",
       "Value": {
         "Fn::GetAtt": [
           "PublicBucket",
@@ -123,7 +76,6 @@
       }
     },
     "PublicBucket": {
-      "Condition": "CreatePublicBucket",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -140,13 +92,12 @@
         },
         "TemplateURL": {
           "Fn::Join": [
-            "-",
+            "/",
             [
-              "https://s3.amazonaws.com/curbformation",
               {
-                "Ref": "Environment"
+                "Ref": "TemplateURLPrefix"
               },
-              "templates/apps/components/s3/storage_buckets.json"
+              "infra/s3/bucket.json"
             ]
           ]
         },
@@ -154,7 +105,6 @@
       }
     },
     "PrivateBucket": {
-      "Condition": "CreatePrivateBucket",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -171,13 +121,12 @@
         },
         "TemplateURL": {
           "Fn::Join": [
-            "-",
+            "/",
             [
-              "https://s3.amazonaws.com/curbformation",
               {
-                "Ref": "Environment"
+                "Ref": "TemplateURLPrefix"
               },
-              "templates/apps/components/s3/storage_buckets.json"
+              "infra/s3/bucket.json"
             ]
           ]
         },

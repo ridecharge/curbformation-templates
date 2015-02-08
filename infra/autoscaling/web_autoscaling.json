@@ -23,9 +23,13 @@
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
-    "SecurityGroups": {
+    "LoadBalancerSecurityGroup": {
       "Description": "Security Groups for the instances",
-      "Type": "CommaDelimitedList"
+      "Type": "String"
+    },
+    "InstanceSecurityGroup": {
+      "Description": "Security Groups for the instances",
+      "Type": "String"
     },
     "InstanceProfile": {
       "Description": "IAM Instance Profile for instances",
@@ -62,9 +66,11 @@
     "LoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
-        "SecurityGroups": {
-          "Ref": "SecurityGroups"
-        },
+        "SecurityGroups": [
+          {
+            "Ref": "LoadBalancerSecurityGroup"
+          }
+        ],
         "Scheme": {
           "Ref": "Scheme"
         },
@@ -135,9 +141,11 @@
         "KeyName": {
           "Ref": "Environment"
         },
-        "SecurityGroups": {
-          "Ref": "SecurityGroups"
-        },
+        "SecurityGroups": [
+          {
+            "Ref": "InstanceSecurityGroup"
+          }
+        ],
         "UserData": {
           "Fn::Base64": {
             "Ref": "UserData"
@@ -160,7 +168,7 @@
         },
         "LoadBalancerNames": [
           {
-            "Ref":"LoadBalancer"
+            "Ref": "LoadBalancer"
           }
         ],
         "Cooldown": "30",

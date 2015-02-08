@@ -51,10 +51,11 @@
             "SourceSecurityGroupId": {"Ref": "LoadBalancerSecurityGroup"}
           }
         ],
+        "VpcId": {"Ref": "Vpc"},
         "Tags": [
           {
             "Key": "Role",
-            "Value": "Database Security"
+            "Value": "Security"
           },
           {
             "Key": "Environment",
@@ -64,8 +65,7 @@
             "Key": "Application",
             "Value": {"Ref": "ApplicationName"}
           }
-        ],
-        "VpcId": {"Ref": "Vpc"}
+        ]
       }
     },
     "LoadBalancerSecurityGroup": {
@@ -80,10 +80,11 @@
             "ToPort": {"Ref": "LoadBalancerPort"}
           }
         ],
+        "VpcId": {"Ref": "Vpc"},
         "Tags": [
           {
             "Key": "Role",
-            "Value": "LoadBalancer Security"
+            "Value": "Security"
           },
           {
             "Key": "Environment",
@@ -93,8 +94,7 @@
             "Key": "Application",
             "Value": {"Ref": "ApplicationName"}
           }
-        ],
-        "VpcId": {"Ref": "Vpc"}
+        ]
       }
     }
   }
