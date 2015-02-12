@@ -92,6 +92,16 @@
       ]
     }
   },
+  "Outputs": {
+    "InternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroups",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    }
+  },
   "Resources": {
     "SecurityGroups": {
       "Type": "AWS::CloudFormation::Stack",

@@ -27,9 +27,9 @@
       "Description": "Security Groups for the instances",
       "Type": "String"
     },
-    "InstanceSecurityGroup": {
+    "InstanceSecurityGroups": {
       "Description": "Security Groups for the instances",
-      "Type": "String"
+      "Type": "CommaDelimitedList"
     },
     "InstanceProfile": {
       "Description": "IAM Instance Profile for instances",
@@ -80,7 +80,7 @@
         "HealthCheck": {
           "HealthyThreshold": "5",
           "Interval": "10",
-          "Target": "tcp:8080",
+          "Target": "HTTP:8080/",
           "Timeout": "5",
           "UnhealthyThreshold": "3"
         },
@@ -141,11 +141,9 @@
         "KeyName": {
           "Ref": "Environment"
         },
-        "SecurityGroups": [
-          {
-            "Ref": "InstanceSecurityGroup"
-          }
-        ],
+        "SecurityGroups": {
+          "Ref": "InstanceSecurityGroups"
+        },
         "UserData": {
           "Fn::Base64": {
             "Ref": "UserData"

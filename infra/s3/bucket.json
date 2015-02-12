@@ -26,13 +26,19 @@
   },
   "Mappings": {
     "ACLMap": {
-      "private": {"AccessControl": "Private"},
-      "public": {"AccessControl": "PublicRead"}
+      "private": {
+        "AccessControl": "Private"
+      },
+      "public": {
+        "AccessControl": "PublicRead"
+      }
     }
   },
   "Outputs": {
     "BucketName": {
-      "Value": {"Ref": "S3Bucket"}
+      "Value": {
+        "Ref": "S3Bucket"
+      }
     }
   },
   "Resources": {
@@ -42,7 +48,9 @@
         "AccessControl": {
           "Fn::FindInMap": [
             "ACLMap",
-            {"Ref": "AccessType"},
+            {
+              "Ref": "AccessType"
+            },
             "AccessControl"
           ]
         },
@@ -50,24 +58,38 @@
           "Fn::Join": [
             "-",
             [
-              {"Ref": "Environment"},
-              {"Ref": "ApplicationName"},
-              {"Ref": "AccessType"}
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "ApplicationName"
+              },
+              {
+                "Ref": "AccessType"
+              }
             ]
           ]
         },
         "LoggingConfiguration": {
-          "DestinationBucketName": {"Ref": "LogBucket"},
-          "LogFilePrefix": {"Ref": "AccessType"}
+          "DestinationBucketName": {
+            "Ref": "LogBucket"
+          },
+          "LogFilePrefix": {
+            "Ref": "AccessType"
+          }
         },
         "Tags": [
           {
             "Key": "Application",
-            "Value": {"Ref": "ApplicationName"}
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           },
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Role",
@@ -75,12 +97,12 @@
           },
           {
             "Key": "Access",
-            "Value": {"Ref": "AccessType"}
+            "Value": {
+              "Ref": "AccessType"
+            }
           }
-
         ]
       }
     }
   }
 }
-

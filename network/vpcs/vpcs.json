@@ -35,6 +35,22 @@
     }
   },
   "Outputs": {
+    "InfrastrucutureInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "InfrastructureVPCInstances",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "ApplicationInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ApplicationVPCInstances",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
     "ApplicationVPC": {
       "Value": {
         "Fn::GetAtt": [
