@@ -14,6 +14,12 @@
       "Description": "Subnets for public instances.",
       "Type": "String"
     },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
     "PrivateSubnets": {
       "Description": "Subnets for private instances.",
       "Type": "String"
@@ -116,6 +122,9 @@
           "InstanceProfile": {
             "Ref": "PublicInternalHostedZoneInstanceProfile"
           },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
           "PublicInternalHostedZone": {
             "Ref": "PublicInternalHostedZone"
           },
@@ -125,9 +134,18 @@
           "ExternalBastionSecurityGroup": {
             "Ref": "ExternalBastionSecurityGroup"
           },
-          "PublicInternalHostedZoneInstanceProfile": {"Ref": "PublicInternalHostedZoneInstanceProfile"},
-          "AvailabilityZones": {"Ref": "AvailabilityZones"},
-          "ImageId": {"Ref": "BastionImageId"},
+          "PublicInternalHostedZoneInstanceProfile": {
+            "Ref": "PublicInternalHostedZoneInstanceProfile"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "BastionImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
           "PublicInternalDomain": {
             "Ref": "PublicInternalDomain"
           },
@@ -142,7 +160,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/instances/bastions.json"
+              "network/instances/bastions.json"
             ]
           ]
         },
@@ -156,6 +174,12 @@
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
           },
           "PrivateSubnets": {
             "Ref": "PrivateSubnets"
@@ -181,9 +205,15 @@
           "BastionSecurityGroup": {
             "Ref": "InternalBastionSecurityGroup"
           },
-          "AvailabilityZones": {"Ref": "AvailabilityZones"},
-          "ImageId": {"Ref": "NTPImageId"},
-          "PublicInternalHostedZone": {"Ref": "PublicInternalHostedZone"},
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "NTPImageId"
+          },
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
           "PublicInternalDomain": {
             "Ref": "PublicInternalDomain"
           },
@@ -198,7 +228,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/instances/ntps.json"
+              "network/instances/ntps.json"
             ]
           ]
         },
@@ -211,6 +241,9 @@
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
           },
           "PublicSubnets": {
             "Ref": "PublicSubnets"
@@ -233,11 +266,24 @@
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
           },
-          "PublicInternalHostedZone": {"Ref": "PublicInternalHostedZone"},
-          "NATSecurityGroup": {"Ref": "NATSecurityGroup"},
-          "NATInstanceProfile": {"Ref": "NATInstanceProfile"},
-          "AvailabilityZones": {"Ref": "AvailabilityZones"},
-          "ImageId": {"Ref": "NATImageId"}
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "NATSecurityGroup": {
+            "Ref": "NATSecurityGroup"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "NATInstanceProfile": {
+            "Ref": "NATInstanceProfile"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "NATImageId"
+          }
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -246,7 +292,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/instances/nats.json"
+              "network/instances/nats.json"
             ]
           ]
         },

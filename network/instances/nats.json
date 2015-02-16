@@ -14,6 +14,12 @@
       "Description": "URL prefix for this stack.",
       "Type": "String"
     },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
     "Vpc": {
       "Description": "VPC for this nat.",
       "Type": "AWS::EC2::VPC::Id"
@@ -43,14 +49,14 @@
       "Type": "String"
     },
     "BastionSecurityGroup": {
-      "Description":"Security group to allow ssh from bastion instancse.",
+      "Description": "Security group to allow ssh from bastion instancse.",
       "Type": "String"
     },
     "NATSecurityGroup": {
       "Type": "String"
     },
-    "NATInstanceProfile":{
-      "Type":"String"
+    "NATInstanceProfile": {
+      "Type": "String"
     },
     "ImageId": {
       "Description": "AMI for NAT Instances",
@@ -67,9 +73,14 @@
           "Environment": {
             "Ref": "Environment"
           },
-          "PublicInternalHostedZone": {"Ref": "PublicInternalHostedZone"},
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
           "InstanceProfile": {
-            "Ref":"NATInstanceProfile"
+            "Ref": "NATInstanceProfile"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
           },
           "PublicInternalDomain": {
             "Ref": "PublicInternalDomain"
@@ -79,11 +90,14 @@
           },
           "UserData": {
             "Fn::Join": [
-              "\n",
+              "",
               [
-                "#!/bin/bash",
-                "service iptables-persistent start",
-                "docker run -d --restart=always -e LOGGLY_TOKEN=e8bcd155-264b-4ec0-88be-fcb023f76a89 sgarlick987/aws-startup-utils ./nat_monitor.py"
+                "service iptables-persistent start\n",
+                "docker run -d --restart=always -e LOGGLY_TOKEN=",
+                {
+                  "Ref": "LogglyToken"
+                },
+                " sgarlick987/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },
@@ -92,9 +106,11 @@
               ",",
               [
                 {
-                  "Ref":"NATSecurityGroup"
+                  "Ref": "NATSecurityGroup"
                 },
-                {"Ref": "BastionSecurityGroup"}
+                {
+                  "Ref": "BastionSecurityGroup"
+                }
               ]
             ]
           },
@@ -107,7 +123,12 @@
           "VpcName": {
             "Ref": "VpcName"
           },
-          "ImageId": {"Ref": "ImageId"},
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "ImageId": {
+            "Ref": "ImageId"
+          },
           "Type": "NAT"
         },
         "TemplateURL": {
@@ -117,7 +138,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/autoscaling/autoscaling_pair.json"
+              "network/instances/autoscaling_pair.json"
             ]
           ]
         },

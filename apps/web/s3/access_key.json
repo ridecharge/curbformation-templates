@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "S3 Bucket Setup v1.0",
+  "Description": "v1.0 S3 Access Key Setup.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment these VPCs represent",

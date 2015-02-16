@@ -43,6 +43,12 @@
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "CommaDelimitedList"
     },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
     "Subnets": {
       "Description": "Subnets to launch NATs into.",
       "Type": "List<AWS::EC2::Subnet::Id>"
@@ -93,7 +99,9 @@
         {
           "Fn::FindInMap": [
             "Types",
-            {"Ref": "Type"},
+            {
+              "Ref": "Type"
+            },
             "healthchecktype"
           ]
         },
@@ -166,7 +174,9 @@
         "AssociatePublicIpAddress": {
           "Fn::FindInMap": [
             "Types",
-            {"Ref": "Type"},
+            {
+              "Ref": "Type"
+            },
             "public"
           ]
         },
@@ -188,7 +198,25 @@
         },
         "UserData": {
           "Fn::Base64": {
-            "Ref": "UserData"
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh\n",
+                "sudo nrsysmond-config --set license_key=",
+                {
+                  "Ref": "NewRelicToken"
+                },
+                "\nsudo service newrelic-sysmond start\n",
+                "sudo docker run -d -p 127.0.0.1:514:514/udp --name logging --restart=always -e LOGGLY_TOKEN=",
+                {
+                  "Ref": "LogglyToken"
+                },
+                " sgarlick987/logging\n",
+                {
+                  "Ref": "UserData"
+                }
+              ]
+            ]
           }
         }
       }
@@ -198,7 +226,7 @@
         "AutoScalingRollingUpdate": {
           "MinInstancesInService": "1",
           "MaxBatchSize": "1",
-          "PauseTime": "PT3M30S"
+          "PauseTime": "PT2M30S"
         }
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
@@ -210,8 +238,12 @@
           {
             "Fn::If": [
               "CreateLoadBalancer",
-              {"Ref": "LoadBalancer"},
-              {"Ref": "AWS::NoValue"}
+              {
+                "Ref": "LoadBalancer"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
             ]
           }
         ],
@@ -221,7 +253,9 @@
         "HealthCheckType": {
           "Fn::FindInMap": [
             "Types",
-            {"Ref": "Type"},
+            {
+              "Ref": "Type"
+            },
             "healthchecktype"
           ]
         },
@@ -287,4 +321,3 @@
     }
   }
 }
-

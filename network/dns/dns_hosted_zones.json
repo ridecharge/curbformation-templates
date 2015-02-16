@@ -17,11 +17,58 @@
     "PublicInternalDomainBase": {
       "Type": "String",
       "Default": "gocurb.io"
+    },
+    "PrivateInternalDomainBase": {
+      "Type": "String",
+      "Default": "gocurb.internal"
+    },
+    "ApplicationVPC": {
+      "Type": "String"
+    },
+    "InfrastructureVPC": {
+      "Type": "String"
+    }
+  },
+  "Mappings": {
+    "PrivateZones": {
+      "test": {
+        "ZoneId": "Z2QDD62MMWX9ID"
+      },
+      "ops1": {
+        "ZoneId": "Z2QDD62MMWX9ID"
+      }
+    }
+  },
+  "Conditions": {
+    "IncludeEnvironmentInDomain": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "Environment"
+            },
+            "prod"
+          ]
+        }
+      ]
     }
   },
   "Outputs": {
     "PrivateInternalHostedZone": {
-      "Value": "Z2FOYNIZLTFYNJ"
+      "Value": {
+        "Fn::FindInMap": [
+          "PrivateZones",
+          {
+            "Ref": "Environment"
+          },
+          "ZoneId"
+        ]
+      }
+    },
+    "PrivateInternalDomain": {
+      "Value": {
+        "Ref": "PrivateInternalDomainBase"
+      }
     },
     "PublicInternalHostedZone": {
       "Value": {
@@ -30,12 +77,24 @@
     },
     "PublicInternalDomain": {
       "Value": {
-        "Fn::Join": [
-          ".",
-          [
-            {"Ref": "Environment"},
-            {"Ref": "PublicInternalDomainBase"}
-          ]
+        "Fn::If": [
+          "IncludeEnvironmentInDomain",
+          {
+            "Fn::Join": [
+              ".",
+              [
+                {
+                  "Ref": "Environment"
+                },
+                {
+                  "Ref": "PublicInternalDomainBase"
+                }
+              ]
+            ]
+          },
+          {
+            "Ref": "PublicInternalDomainBase"
+          }
         ]
       }
     },
@@ -46,12 +105,24 @@
     },
     "PublicExternalDomain": {
       "Value": {
-        "Fn::Join": [
-          ".",
-          [
-            {"Ref": "Environment"},
-            {"Ref": "PublicExternalDomainBase"}
-          ]
+        "Fn::If": [
+          "IncludeEnvironmentInDomain",
+          {
+            "Fn::Join": [
+              ".",
+              [
+                {
+                  "Ref": "Environment"
+                },
+                {
+                  "Ref": "PublicExternalDomainBase"
+                }
+              ]
+            ]
+          },
+          {
+            "Ref": "PublicExternalDomainBase"
+          }
         ]
       }
     }
@@ -66,18 +137,32 @@
               " ",
               [
                 "Public Internal Hosted Zone for",
-                {"Ref": "Environment"}
+                {
+                  "Ref": "Environment"
+                }
               ]
             ]
           }
         },
         "Name": {
-          "Fn::Join": [
-            ".",
-            [
-              {"Ref": "Environment"},
-              {"Ref": "PublicInternalDomainBase"}
-            ]
+          "Fn::If": [
+            "IncludeEnvironmentInDomain",
+            {
+              "Fn::Join": [
+                ".",
+                [
+                  {
+                    "Ref": "Environment"
+                  },
+                  {
+                    "Ref": "PublicInternalDomainBase"
+                  }
+                ]
+              ]
+            },
+            {
+              "Ref": "PublicInternalDomainBase"
+            }
           ]
         }
       }
@@ -91,18 +176,32 @@
               " ",
               [
                 "Public External Hosted Zone for",
-                {"Ref": "Environment"}
+                {
+                  "Ref": "Environment"
+                }
               ]
             ]
           }
         },
         "Name": {
-          "Fn::Join": [
-            ".",
-            [
-              {"Ref": "Environment"},
-              {"Ref": "PublicExternalDomainBase"}
-            ]
+          "Fn::If": [
+            "IncludeEnvironmentInDomain",
+            {
+              "Fn::Join": [
+                ".",
+                [
+                  {
+                    "Ref": "Environment"
+                  },
+                  {
+                    "Ref": "PublicExternalDomainBase"
+                  }
+                ]
+              ]
+            },
+            {
+              "Ref": "PublicExternalDomainBase"
+            }
           ]
         }
       }

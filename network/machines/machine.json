@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Required Infrastructure Services.",
+  "Description": "v1.0 Creates Required Networking Machines Services.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch these services into.",
@@ -26,6 +26,9 @@
       "Description": "Route53 Public External Hosted Zone for VPC.",
       "Type": "String"
     },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
     "PublicInternalDomain": {
       "Description": "Route53 Public Internal Domain for VPC.",
       "Type": "String"
@@ -36,6 +39,12 @@
     },
     "AvailabilityZones": {
       "Description": "AvailabilityZones to launch services into.",
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "LogglyToken": {
       "Type": "String"
     },
     "VpcName": {
@@ -135,7 +144,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/security_groups/security_groups.json"
+              "network/security_groups/security_groups.json"
             ]
           ]
         },
@@ -169,7 +178,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/instance_profiles/instance_profiles.json"
+              "network/instance_profiles/instance_profiles.json"
             ]
           ]
         },
@@ -249,6 +258,9 @@
           "NTPImageId": {
             "Ref": "NTPImageId"
           },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
           "VpcName": {
             "Ref": "VpcName"
           },
@@ -263,6 +275,9 @@
           },
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
           }
         },
         "TemplateURL": {
@@ -272,11 +287,11 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/instances/instances.json"
+              "network/instances/instances.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "10"
       }
     }
   }

@@ -1,0 +1,288 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "v1.0 Creates Required Networking Machines Services.",
+  "Parameters": {
+    "Environment": {
+      "Description": "Name of the environment to launch these services into.",
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "8",
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    },
+    "TemplateURLPrefix": {
+      "Description": "Template URL prefix for nested stacks.",
+      "Type": "String"
+    },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicInternalHostedZone": {
+      "Description": "Route53 Public Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicExternalHostedZone": {
+      "Description": "Route53 Public External Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
+    "PublicInternalDomain": {
+      "Description": "Route53 Public Internal Domain for VPC.",
+      "Type": "String"
+    },
+    "PublicExternalDomain": {
+      "Description": "Route53 Public External Domain for VPC.",
+      "Type": "String"
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch services into.",
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "ApplicationVpcName": {
+      "Description": "Name of the VPC to create application services in.",
+      "Type": "String",
+      "Default": "Application"
+    },
+    "InfrastructureVpcName": {
+      "Description": "Name of the VPC to create application services in.",
+      "Type": "String",
+      "Default": "Infrastructure"
+    },
+    "ApplicationVpc": {
+      "Description": "ApplicationVPC to launch the services into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "InfrastructureVpc": {
+      "Description": "InfrastructureVPC to launch the services into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "ApplicationCidrBlockPrefix": {
+      "Description": "CidrBlock for this VPC",
+      "Type": "String",
+      "MinLength": "3",
+      "MaxLength": "7",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
+      "ConstraintDescription": "Must be the first 2 bytes of a CidrBlock."
+    },
+    "InfrastructureCidrBlockPrefix": {
+      "Description": "CidrBlock for this VPC",
+      "Type": "String",
+      "MinLength": "3",
+      "MaxLength": "7",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
+      "ConstraintDescription": "Must be the first 2 bytes of a CidrBlock."
+    },
+    "InfrastructurePublicSubnets": {
+      "Description": "Subnets to create public services in.",
+      "Type": "String"
+    },
+    "InfrastructurePrivateSubnets": {
+      "Description": "Subnets to create private services in.",
+      "Type": "String"
+    },
+    "ApplicationPublicSubnets": {
+      "Description": "Subnets to create public services in.",
+      "Type": "String"
+    },
+    "ApplicationPrivateSubnets": {
+      "Description": "Subnets to create public services in.",
+      "Type": "String"
+    },
+    "NATImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    },
+    "BastionImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    },
+    "NTPImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    }
+  },
+  "Resources": {
+    "InfrastructureMachines": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "NATImageId": {
+            "Ref": "NATImageId"
+          },
+          "BastionImageId": {
+            "Ref": "BastionImageId"
+          },
+          "NTPImageId": {
+            "Ref": "NTPImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "PrivateInternalHostedZone": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "PublicExternalHostedZone": {
+            "Ref": "PublicExternalHostedZone"
+          },
+          "PrivateInternalDomain": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "PublicInternalDomain": {
+            "Ref": "PublicInternalDomain"
+          },
+          "PublicExternalDomain": {
+            "Ref": "PublicExternalDomain"
+          },
+          "VpcName": {
+            "Ref": "InfrastructureVpcName"
+          },
+          "Vpc": {
+            "Ref": "InfrastructureVpc"
+          },
+          "CidrBlockPrefix": {
+            "Ref": "InfrastructureCidrBlockPrefix"
+          },
+          "PublicSubnets": {
+            "Ref": "InfrastructurePublicSubnets"
+          },
+          "PrivateSubnets": {
+            "Ref": "InfrastructurePrivateSubnets"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/machines/machine.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    },
+    "ApplicationMachines": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "NATImageId": {
+            "Ref": "NATImageId"
+          },
+          "BastionImageId": {
+            "Ref": "BastionImageId"
+          },
+          "NTPImageId": {
+            "Ref": "NTPImageId"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "PrivateInternalHostedZone": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "PublicExternalHostedZone": {
+            "Ref": "PublicExternalHostedZone"
+          },
+          "PrivateInternalDomain": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "PublicInternalDomain": {
+            "Ref": "PublicInternalDomain"
+          },
+          "PublicExternalDomain": {
+            "Ref": "PublicExternalDomain"
+          },
+          "VpcName": {
+            "Ref": "ApplicationVpcName"
+          },
+          "Vpc": {
+            "Ref": "ApplicationVpc"
+          },
+          "CidrBlockPrefix": {
+            "Ref": "ApplicationCidrBlockPrefix"
+          },
+          "PublicSubnets": {
+            "Ref": "ApplicationPublicSubnets"
+          },
+          "PrivateSubnets": {
+            "Ref": "ApplicationPrivateSubnets"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/machines/machine.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    }
+  },
+  "Outputs": {
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "InfrastructureMachines",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "ApplicationInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ApplicationMachines",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    }
+  }
+}

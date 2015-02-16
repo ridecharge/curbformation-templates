@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": " v1.0 Creates an Autoscaling HA pair of Instances for a Service",
+  "Description": " v1.0 Creates an Web Autoscaling group",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -60,6 +60,12 @@
         "internal",
         "internet-facing"
       ]
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
     }
   },
   "Resources": {
@@ -146,7 +152,25 @@
         },
         "UserData": {
           "Fn::Base64": {
-            "Ref": "UserData"
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh\n",
+                "sudo nrsysmond-config --set license_key=",
+                {
+                  "Ref": "NewRelicToken"
+                },
+                "\nsudo service newrelic-sysmond start\n",
+                "sudo docker run -d -p 127.0.0.1:514:514/udp --name logging --restart=always -e LOGGLY_TOKEN=",
+                {
+                  "Ref": "LogglyToken"
+                },
+                " sgarlick987/logging\n",
+                {
+                  "Ref": "UserData"
+                }
+              ]
+            ]
           }
         }
       }
@@ -156,7 +180,7 @@
         "AutoScalingRollingUpdate": {
           "MinInstancesInService": "1",
           "MaxBatchSize": "1",
-          "PauseTime": "PT3M30S"
+          "PauseTime": "PT2M30S"
         }
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",

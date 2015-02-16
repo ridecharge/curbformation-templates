@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "S3 Setup v1.0",
+  "Description": "v1.0 Creates private, public, and logging s3 buckets",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to create s3 buckets in.",
@@ -97,7 +97,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/s3/bucket.json"
+              "apps/web/s3/bucket.json"
             ]
           ]
         },
@@ -126,7 +126,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/s3/bucket.json"
+              "apps/web/s3/bucket.json"
             ]
           ]
         },

@@ -80,7 +80,7 @@
     },
     "DatabaseType": {
       "Type": "String",
-      "Default": "postgres",
+      "Default": "mysql",
       "AllowedValues": [
         "postgres",
         "mysql"
@@ -129,18 +129,32 @@
       }
     },
     "AllocatedStorage": {
-      "100": {"Iops": "1000"},
-      "300": {"Iops": "3000"},
-      "500": {"Iops": "5000"},
-      "1000": {"Iops": "10000"},
-      "2000": {"Iops": "20000"},
-      "3000": {"Iops": "30000"}
+      "100": {
+        "Iops": "1000"
+      },
+      "300": {
+        "Iops": "3000"
+      },
+      "500": {
+        "Iops": "5000"
+      },
+      "1000": {
+        "Iops": "10000"
+      },
+      "2000": {
+        "Iops": "20000"
+      },
+      "3000": {
+        "Iops": "30000"
+      }
     }
   },
   "Conditions": {
     "UseProvisionedIops": {
       "Fn::Equals": [
-        {"Ref": "ProvisionIops"},
+        {
+          "Ref": "ProvisionIops"
+        },
         "true"
       ]
     }
@@ -156,21 +170,29 @@
             "FromPort": {
               "Fn::FindInMap": [
                 "DatabaseTypes",
-                {"Ref": "DatabaseType"},
+                {
+                  "Ref": "DatabaseType"
+                },
                 "Port"
               ]
             },
             "ToPort": {
               "Fn::FindInMap": [
                 "DatabaseTypes",
-                {"Ref": "DatabaseType"},
+                {
+                  "Ref": "DatabaseType"
+                },
                 "Port"
               ]
             },
-            "SourceSecurityGroupId": {"Ref": "InstanceSecurityGroup"}
+            "SourceSecurityGroupId": {
+              "Ref": "InstanceSecurityGroup"
+            }
           }
         ],
-        "VpcId": {"Ref": "Vpc"},
+        "VpcId": {
+          "Ref": "Vpc"
+        },
         "Tags": [
           {
             "Key": "Role",
@@ -178,11 +200,15 @@
           },
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Application",
-            "Value": {"Ref": "ApplicationName"}
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           }
         ]
       }
@@ -190,39 +216,63 @@
     "Database": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
-        "AllocatedStorage": {"Ref": "AllocatedStorage"},
+        "AllocatedStorage": {
+          "Ref": "AllocatedStorage"
+        },
         "DBInstanceClass": {
           "Ref": "DBInstanceClass"
         },
-        "DBName": {"Ref": "ApplicationName"},
+        "DBName": {
+          "Ref": "ApplicationName"
+        },
         "DBInstanceIdentifier": {
           "Fn::Join": [
             "-",
             [
-              {"Ref": "Environment"},
-              {"Ref": "ApplicationName"}
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "ApplicationName"
+              }
             ]
           ]
         },
         "Engine": {
           "Fn::FindInMap": [
             "DatabaseTypes",
-            {"Ref": "DatabaseType"},
+            {
+              "Ref": "DatabaseType"
+            },
             "Engine"
           ]
         },
         "EngineVersion": {
           "Fn::FindInMap": [
             "DatabaseTypes",
-            {"Ref": "DatabaseType"},
+            {
+              "Ref": "DatabaseType"
+            },
             "EngineVersion"
           ]
         },
-        "MasterUsername": {"Ref": "MasterUsername"},
-        "MasterUserPassword": {"Ref": "MasterUserPassword"},
-        "MultiAZ": {"Ref": "MultiAZ"},
-        "VPCSecurityGroups": [{"Ref": "SecurityGroup"}],
-        "DBSubnetGroupName": {"Ref": "DBSubnetGroupName"},
+        "MasterUsername": {
+          "Ref": "MasterUsername"
+        },
+        "MasterUserPassword": {
+          "Ref": "MasterUserPassword"
+        },
+        "MultiAZ": {
+          "Ref": "MultiAZ"
+        },
+        "VPCSecurityGroups": [
+          {
+            "Ref": "SecurityGroup"
+          }
+        ],
+        "DBSubnetGroupName": {
+          "Ref": "DBSubnetGroupName"
+        },
         "StorageType": {
           "Fn::If": [
             "UseProvisionedIops",
@@ -236,17 +286,23 @@
             {
               "Fn::FindInMap": [
                 "AllocatedStorage",
-                {"Ref": "AllocatedStorage"},
+                {
+                  "Ref": "AllocatedStorage"
+                },
                 "Iops"
               ]
             },
-            {"Ref": "AWS::NoValue"}
+            {
+              "Ref": "AWS::NoValue"
+            }
           ]
         },
         "Tags": [
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Role",

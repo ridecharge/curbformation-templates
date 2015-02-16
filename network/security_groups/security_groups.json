@@ -81,11 +81,11 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/security_groups/nat_security.json"
+              "network/security_groups/nat_security.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     },
     "NTPSecurity": {
@@ -106,11 +106,11 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/security_groups/ntp_security.json"
+              "network/security_groups/ntp_security.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     },
     "BastionSecurity": {
@@ -131,11 +131,11 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/security_groups/bastion_security.json"
+              "network/security_groups/bastion_security.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     }
   }

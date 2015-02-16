@@ -106,6 +106,20 @@
         "IpProtocol": "udp",
         "ToPort": "123"
       }
+    },    
+    "SyslogIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": {
+          "Ref": "CidrBlock"
+        },
+        "FromPort": "6514",
+        "GroupId": {
+          "Ref": "SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "ToPort": "6514"
+      }
     },
     "TCPPingIngress": {
       "Type": "AWS::EC2::SecurityGroupIngress",

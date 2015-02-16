@@ -14,6 +14,12 @@
       "Description": "URL prefix for this stack.",
       "Type": "String"
     },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
     "Vpc": {
       "Description": "VPC for this nat.",
       "Type": "AWS::EC2::VPC::Id"
@@ -73,7 +79,9 @@
   "Conditions": {
     "CreateNTPInstances": {
       "Fn::Equals": [
-        {"Ref": "VpcName"},
+        {
+          "Ref": "VpcName"
+        },
         "Infrastructure"
       ]
     }
@@ -87,7 +95,9 @@
           "Environment": {
             "Ref": "Environment"
           },
-          "Subnets": {"Ref": "PrivateSubnets"},
+          "Subnets": {
+            "Ref": "PrivateSubnets"
+          },
           "Role": "ntp",
           "IpLastDigit": "5",
           "CidrBlockPrefix": {
@@ -97,8 +107,12 @@
             "Fn::Join": [
               ",",
               [
-                {"Ref": "NTPSecurityGroup"},
-                {"Ref": "BastionSecurityGroup"}
+                {
+                  "Ref": "NTPSecurityGroup"
+                },
+                {
+                  "Ref": "BastionSecurityGroup"
+                }
               ]
             ]
           }
@@ -110,7 +124,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/autoscaling/static_eni_pair.json"
+              "network/instances/static_eni_pair.json"
             ]
           ]
         },
@@ -145,7 +159,12 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
-          "PublicInternalHostedZone": {"Ref": "PublicInternalHostedZone"},
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
           "VpcName": {
             "Ref": "VpcName"
           },
@@ -155,15 +174,25 @@
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
           },
-          "InstanceProfile": {"Ref": "InstanceProfile"},
-          "ImageId": {"Ref": "ImageId"},
+          "InstanceProfile": {
+            "Ref": "InstanceProfile"
+          },
+          "ImageId": {
+            "Ref": "ImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
           "Type": "NTP",
           "UserData": {
             "Fn::Join": [
-              "\n",
+              "",
               [
-                "#!/bin/bash",
-                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=e8bcd155-264b-4ec0-88be-fcb023f76a89 sgarlick987/aws-startup-utils ./attach_eni.py",
+                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=",
+                {
+                  "Ref": "LogglyToken"
+                },
+                " sgarlick987/aws-startup-utils ./attach_eni.py\n",
                 "/root/config_network_interface.sh eth1"
               ]
             ]
@@ -176,7 +205,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "infra/autoscaling/autoscaling_pair.json"
+              "network/instances/autoscaling_pair.json"
             ]
           ]
         },

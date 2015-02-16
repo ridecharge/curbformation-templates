@@ -18,12 +18,16 @@
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})",
       "ConstraintDescription": "Must be the first 2 bytes of a CidrBlock."
     },
+    "CidrBlockPostfix": {
+      "Type": "String",
+      "Default": "0.0/16"
+    },
     "TemplateURLPrefix": {
       "Description": "Template URL for a VPC.",
       "Type": "String"
     },
     "VpcName": {
-      "Description":"Name of this VPC.",
+      "Description": "Name of this VPC.",
       "Type": "String",
       "AllowedValues": [
         "Infrastructure",
@@ -33,74 +37,6 @@
     "AvailabilityZones": {
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "String"
-    }
-  },
-  "Outputs": {
-    "Vpc": {
-      "Value": {
-        "Ref": "VPC"
-      }
-    },
-    "PrivateSubnets": {
-      "Value": {
-        "Fn::GetAtt": [
-          "Subnets",
-          "Outputs.PrivateSubnets"
-        ]
-      }
-    },
-    "PublicSubnets": {
-      "Value": {
-        "Fn::GetAtt": [
-          "Subnets",
-          "Outputs.PublicSubnets"
-        ]
-      }
-    },
-    "DBSubnetGroup": {
-      "Value": {
-        "Fn::GetAtt": [
-          "Subnets",
-          "Outputs.DBSubnetGroup"
-        ]
-      }
-    },
-    "PrivateRouteTableA": {
-      "Value": {
-        "Fn::GetAtt": [
-          "Routes",
-          "Outputs.PrivateRouteTableA"
-        ]
-      }
-    },
-    "PrivateRouteTableB": {
-      "Value": {
-        "Fn::GetAtt": [
-          "Routes",
-          "Outputs.PrivateRouteTableB"
-        ]
-      }
-    },
-    "PublicRouteTable":{
-      "Value": {
-        "Fn::GetAtt": [
-          "Routes",
-          "Outputs.PublicRouteTable"
-        ]
-      }
-    },
-    "CidrBlock": {
-      "Value": {
-        "Fn::Join": [
-          ".",
-          [
-            {
-              "Ref": "CidrBlockPrefix"
-            },
-            "0.0/16"
-          ]
-        ]
-      }
     }
   },
   "Resources": {
@@ -114,7 +50,9 @@
               {
                 "Ref": "CidrBlockPrefix"
               },
-              "0.0/16"
+              {
+                "Ref": "CidrBlockPostfix"
+              }
             ]
           ]
         },
@@ -202,7 +140,7 @@
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     },
     "Routes": {
@@ -240,7 +178,9 @@
                 {
                   "Ref": "CidrBlockPrefix"
                 },
-                "0.0/16"
+                {
+                  "Ref": "CidrBlockPostfix"
+                }
               ]
             ]
           }
@@ -256,9 +196,78 @@
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
+      }
+    }
+  },
+  "Outputs": {
+    "Vpc": {
+      "Value": {
+        "Ref": "VPC"
+      }
+    },
+    "PrivateSubnets": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Subnets",
+          "Outputs.PrivateSubnets"
+        ]
+      }
+    },
+    "PublicSubnets": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Subnets",
+          "Outputs.PublicSubnets"
+        ]
+      }
+    },
+    "DBSubnetGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Subnets",
+          "Outputs.DBSubnetGroup"
+        ]
+      }
+    },
+    "PrivateRouteTableA": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Routes",
+          "Outputs.PrivateRouteTableA"
+        ]
+      }
+    },
+    "PrivateRouteTableB": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Routes",
+          "Outputs.PrivateRouteTableB"
+        ]
+      }
+    },
+    "PublicRouteTable": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Routes",
+          "Outputs.PublicRouteTable"
+        ]
+      }
+    },
+    "CidrBlock": {
+      "Value": {
+        "Fn::Join": [
+          ".",
+          [
+            {
+              "Ref": "CidrBlockPrefix"
+            },
+            {
+              "Ref": "CidrBlockPostfix"
+            }
+          ]
+        ]
       }
     }
   }
 }
-
