@@ -50,12 +50,12 @@
     "ApplicationVpcName": {
       "Description": "Name of the VPC to create application services in.",
       "Type": "String",
-      "Default": "Application"
+      "Default": "application"
     },
     "InfrastructureVpcName": {
       "Description": "Name of the VPC to create application services in.",
       "Type": "String",
-      "Default": "Infrastructure"
+      "Default": "infrastructure"
     },
     "ApplicationVpc": {
       "Description": "ApplicationVPC to launch the services into.",

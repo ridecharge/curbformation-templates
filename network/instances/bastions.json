@@ -114,19 +114,16 @@
           "ImageId": {
             "Ref": "ImageId"
           },
-          "Type": "Bastion",
+          "Type": "bastion",
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
           "UserData": {
             "Fn::Join": [
-              "",
+              " ",
               [
-                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=",
-                {
-                  "Ref": "LogglyToken"
-                },
-                " sgarlick987/aws-startup-utils ./register_dns.py"
+                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                "sgarlick987/aws-startup-utils ./register_dns.py"
               ]
             ]
           }

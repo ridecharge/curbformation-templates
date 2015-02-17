@@ -28,11 +28,11 @@
     },
     "ApplicationVPCName": {
       "Type": "String",
-      "Default": "Application"
+      "Default": "application"
     },
     "InfrastructureVPCName": {
       "Type": "String",
-      "Default": "Infrastructure"
+      "Default": "infrastructure"
     }
   },
   "Resources": {

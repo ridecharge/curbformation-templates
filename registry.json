@@ -1,0 +1,269 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "v1.0 Creates a Docker Registry service",
+  "Parameters": {
+    "Environment": {
+      "Description": "Name of the environment to launch services into.",
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "8",
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Type": "String"
+    },
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "InfrastructureVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "InfrastructureVPC": {
+      "Description": "VPC to launch this subnet into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
+    },
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "StorageBuckets": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": "global",
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/s3/buckets.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "AccessKeys": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": "global",
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/s3/access_key.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    },
+    "InstanceProfile": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_profile.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "Security": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Vpc": {
+            "Ref": "InfrastructureVPC"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "Instances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "InstanceSecurityGroups": {
+            "Fn::Join": [
+              ",",
+              [
+                {
+                  "Fn::GetAtt": [
+                    "Security",
+                    "Outputs.InstanceSecurityGroup"
+                  ]
+                },
+                {
+                  "Ref": "InfrastructureInternalBastionSecurityGroup"
+                }
+              ]
+            ]
+          },
+          "LoadBalancerSecurityGroup": {
+            "Fn::GetAtt": [
+              "Security",
+              "Outputs.LoadBalancerSecurityGroup"
+            ]
+          },
+          "Scheme": "internal",
+          "InstanceType": "c4.large",
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
+          "Subnets": {
+            "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "ImageId": "ami-18b8ec70",
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "docker run",
+                " -d",
+                " --restart=always",
+                " --name ",
+                {
+                  "Ref": "ApplicationName"
+                },
+                " -e SETTINGS_FLAVOR=s3",
+                " -e STORAGE_PATH=/registry",
+                " -e AWS_BUCKET=global-",
+                {
+                  "Ref": "ApplicationName"
+                },
+                "-private",
+                " -e AWS_KEY=",
+                {
+                  "Fn::GetAtt": [
+                    "AccessKeys",
+                    "Outputs.AccessKey"
+                  ]
+                },
+                " -e AWS_SECRET=",
+                {
+                  "Fn::GetAtt": [
+                    "AccessKeys",
+                    "Outputs.SecretAccessKey"
+                  ]
+                },
+                " -e SEARCH_BACKEND=sqlalchemy",
+                " -p 5000:5000",
+                " registry:latest\n",
+                "docker run",
+                " -d",
+                " --restart=always",
+                " --link logging:logging",
+                " --link ",
+                {
+                  "Ref": "ApplicationName"
+                },
+                ":",
+                {
+                  "Ref": "ApplicationName"
+                },
+                " -p 8080:8080",
+                " sgarlick987/nginx-",
+                {
+                  "Ref": "ApplicationName"
+                },
+                ":latest"
+              ]
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_autoscaling.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    }
+  }
+}

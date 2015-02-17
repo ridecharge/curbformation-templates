@@ -155,21 +155,20 @@
             "Fn::Join": [
               "",
               [
-                "#!/bin/sh\n",
-                "sudo nrsysmond-config --set license_key=",
-                {
-                  "Ref": "NewRelicToken"
-                },
-                "\nsudo service newrelic-sysmond start\n",
-                "sudo docker run -d -p 127.0.0.1:514:514/udp --name logging --restart=always -e CF_ENV=",
-                {
-                  "Ref": "Environment"
-                },
-                " -e LOGGLY_TOKEN=",
+                "#!/bin/sh",
+                "\nexport LOGGLY_TOKEN=",
                 {
                   "Ref": "LogglyToken"
                 },
-                " sgarlick987/logging\n",
+                "\nexport NR_TOKEN=",
+                {
+                  "Ref": "NewRelicToken"
+                },
+                "\nexport ENVIRONMENT=",
+                {
+                  "Ref": "Environment"
+                },
+                "\n/root/startup.sh\n",
                 {
                   "Ref": "UserData"
                 }

@@ -2,9 +2,6 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": " v1.0 Creates Instance Profile to allow for Route53 Resource Record Set updates.",
   "Parameters": {
-    "HostedZone": {
-      "Type": "String"
-    },
     "Environment": {
       "Description": "Name of the environment to create the security group in.",
       "Type": "String",
@@ -12,6 +9,10 @@
       "MaxLength": "14",
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "can contain only lower case alphanumeric characters."
+    },
+    "HostedZone": {
+      "Description": "Route53 Hosted Zone for VPC.",
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -48,7 +49,10 @@
               "Statement": [
                 {
                   "Effect": "Allow",
-                  "Action": ["route53:ChangeResourceRecordSets"],
+                  "Action": [
+                    "route53:ListResourceRecordSets",
+                    "route53:ChangeResourceRecordSets"
+                  ],
                   "Resource": {
                     "Fn::Join": [
                       "/",
@@ -64,7 +68,6 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "route53:ListHostedZones",
                     "ec2:DescribeInstances"
                   ],
                   "Resource": "*"

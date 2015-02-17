@@ -51,8 +51,8 @@
       "Description": "Name of the VPC to create services in.",
       "Type": "String",
       "AllowedValues": [
-        "Infrastructure",
-        "Application"
+        "infrastructure",
+        "application"
       ]
     },
     "Vpc": {
@@ -97,7 +97,7 @@
         {
           "Ref": "VpcName"
         },
-        "Infrastructure"
+        "infrastructure"
       ]
     }
   },
@@ -148,7 +148,7 @@
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     },
     "InstanceProfiles": {
@@ -182,7 +182,7 @@
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "5"
       }
     },
     "Instances": {

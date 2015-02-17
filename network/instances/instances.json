@@ -80,8 +80,8 @@
       "Description": "Name of the VPC to create services in.",
       "Type": "String",
       "AllowedValues": [
-        "Infrastructure",
-        "Application"
+        "infrastructure",
+        "application"
       ]
     },
     "AvailabilityZones": {

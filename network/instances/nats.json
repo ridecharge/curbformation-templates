@@ -93,10 +93,7 @@
               "",
               [
                 "service iptables-persistent start\n",
-                "docker run -d --restart=always -e LOGGLY_TOKEN=",
-                {
-                  "Ref": "LogglyToken"
-                },
+                "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
                 " sgarlick987/aws-startup-utils ./nat_monitor.py"
               ]
             ]
@@ -129,7 +126,7 @@
           "ImageId": {
             "Ref": "ImageId"
           },
-          "Type": "NAT"
+          "Type": "nat"
         },
         "TemplateURL": {
           "Fn::Join": [
