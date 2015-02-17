@@ -207,7 +207,7 @@
                   "Ref": "NewRelicToken"
                 },
                 "\nsudo service newrelic-sysmond start\n",
-                "sudo docker run -d -p 127.0.0.1:514:514/udp --name logging --restart=always -e CF_ENV=",
+                "sudo docker run -d -p 127.0.0.1:514:514/udp --name logging --restart=always -e ENVIRONMENT=",
                 {
                   "Ref": "Environment"
                 },
