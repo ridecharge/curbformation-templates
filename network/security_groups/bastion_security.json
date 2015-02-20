@@ -57,7 +57,9 @@
             "IpProtocol": "tcp",
             "FromPort": "22",
             "ToPort": "22",
-            "SourceSecurityGroupId": {"Ref": "ExternalBastionSecurityGroup"}
+            "SourceSecurityGroupId": {
+              "Ref": "ExternalBastionSecurityGroup"
+            }
           }
         ]
       }

@@ -46,12 +46,20 @@
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": {"Ref": "InstancePort"},
-            "ToPort": {"Ref": "InstancePort"},
-            "SourceSecurityGroupId": {"Ref": "LoadBalancerSecurityGroup"}
+            "FromPort": {
+              "Ref": "InstancePort"
+            },
+            "ToPort": {
+              "Ref": "InstancePort"
+            },
+            "SourceSecurityGroupId": {
+              "Ref": "LoadBalancerSecurityGroup"
+            }
           }
         ],
-        "VpcId": {"Ref": "Vpc"},
+        "VpcId": {
+          "Ref": "Vpc"
+        },
         "Tags": [
           {
             "Key": "Role",
@@ -59,11 +67,15 @@
           },
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Application",
-            "Value": {"Ref": "ApplicationName"}
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           }
         ]
       }
@@ -76,11 +88,17 @@
           {
             "IpProtocol": "tcp",
             "CidrIp": "0.0.0.0/0",
-            "FromPort": {"Ref": "LoadBalancerPort"},
-            "ToPort": {"Ref": "LoadBalancerPort"}
+            "FromPort": {
+              "Ref": "LoadBalancerPort"
+            },
+            "ToPort": {
+              "Ref": "LoadBalancerPort"
+            }
           }
         ],
-        "VpcId": {"Ref": "Vpc"},
+        "VpcId": {
+          "Ref": "Vpc"
+        },
         "Tags": [
           {
             "Key": "Role",
@@ -88,11 +106,15 @@
           },
           {
             "Key": "Environment",
-            "Value": {"Ref": "Environment"}
+            "Value": {
+              "Ref": "Environment"
+            }
           },
           {
             "Key": "Application",
-            "Value": {"Ref": "ApplicationName"}
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           }
         ]
       }

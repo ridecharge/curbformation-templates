@@ -24,11 +24,19 @@
     },
     "Role": {
       "Type": "String",
-      "AllowedValues": ["ntp"]
+      "AllowedValues": [
+        "ntp",
+        "etcd"
+      ]
     },
     "IpLastDigit": {
       "Type": "Number",
-      "AllowedValues": ["5"]
+      "AllowedValues": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ]
     },
     "SecurityGroups": {
       "Type": "CommaDelimitedList"
@@ -45,9 +53,13 @@
           "Fn::Join": [
             ".",
             [
-              {"Ref": "CidrBlockPrefix"},
+              {
+                "Ref": "CidrBlockPrefix"
+              },
               "0",
-              {"Ref": "IpLastDigit"}
+              {
+                "Ref": "IpLastDigit"
+              }
             ]
           ]
         },
@@ -62,7 +74,9 @@
         "Tags": [
           {
             "Key": "Role",
-            "Value": {"Ref": "Role"}
+            "Value": {
+              "Ref": "Role"
+            }
           }
         ]
       }
@@ -77,9 +91,13 @@
           "Fn::Join": [
             ".",
             [
-              {"Ref": "CidrBlockPrefix"},
+              {
+                "Ref": "CidrBlockPrefix"
+              },
               "64",
-              {"Ref": "IpLastDigit"}
+              {
+                "Ref": "IpLastDigit"
+              }
             ]
           ]
         },
@@ -94,7 +112,9 @@
         "Tags": [
           {
             "Key": "Role",
-            "Value": {"Ref": "Role"}
+            "Value": {
+              "Ref": "Role"
+            }
           }
         ]
       }

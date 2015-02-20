@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a Docker Registry service",
+  "Description": "v1.0 Creates a ETCD service",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -39,11 +39,16 @@
     }
   },
   "Resources": {
-    "StorageBuckets": {
+    "Security": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
-          "Environment": "global",
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Vpc": {
+            "Ref": "InfrastructureVPC"
+          },
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
@@ -58,83 +63,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/s3/buckets.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "AccessKeys": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": "global",
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "apps/web/s3/access_key.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "10"
-      }
-    },
-    "InstanceProfile": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "apps/web/web_profile.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "Security": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Vpc": {
-            "Ref": "InfrastructureVPC"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "apps/web/web_security.json"
+              "apps/security_groups/etcd_security.json"
             ]
           ]
         },
@@ -173,31 +102,33 @@
               "Outputs.LoadBalancerSecurityGroup"
             ]
           },
-          "Scheme": "internal",
-          "InstanceType": "c4.large",
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
-          "InstanceProfile": {
-            "Fn::GetAtt": [
-              "InstanceProfile",
-              "Outputs.InstanceProfile"
-            ]
-          },
           "Subnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
-          "ImageId": "ami-a64a1dce",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
+          "Scheme": "internal",
+          "InstanceType": "c4.large",
+          "ImageId": "ami-a64a1dce",
+          "MinSize": "6",
+          "MaxSize": "6",
+          "DesiredCapacity": "6",
+          "DeployMaxBatchSize": "5",
+          "DeployMinInstancesInService": "5",
+          "InstancePort": "4001",
+          "InstanceHealthCheck": "/version",
           "UserData": {
             "Fn::Join": [
               "",
               [
+                "HOST_IP=$(hostname --all-ip-addresses | awk '{print $1}')\n",
                 "docker run",
                 " -d",
                 " --restart=always",
@@ -205,48 +136,10 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                " -e SETTINGS_FLAVOR=s3",
-                " -e STORAGE_PATH=/registry",
-                " -e AWS_BUCKET=global-",
-                {
-                  "Ref": "ApplicationName"
-                },
-                "-private",
-                " -e AWS_KEY=",
-                {
-                  "Fn::GetAtt": [
-                    "AccessKeys",
-                    "Outputs.AccessKey"
-                  ]
-                },
-                " -e AWS_SECRET=",
-                {
-                  "Fn::GetAtt": [
-                    "AccessKeys",
-                    "Outputs.SecretAccessKey"
-                  ]
-                },
-                " -e SEARCH_BACKEND=sqlalchemy",
-                " -p 5000:5000",
-                " registry:latest\n",
-                "docker run",
-                " -d",
-                " --restart=always",
-                " --link logging:logging",
-                " --link ",
-                {
-                  "Ref": "ApplicationName"
-                },
-                ":",
-                {
-                  "Ref": "ApplicationName"
-                },
-                " -p 8080:8080",
-                " sgarlick987/nginx-",
-                {
-                  "Ref": "ApplicationName"
-                },
-                ":latest"
+                " -e HOST_IP=$HOST_IP",
+                " -e ETCD_DISCOVERY=https://discovery.etcd.io/3eef4c90837457920e8a413f4eba682d",
+                " -p 4001:4001 -p 7001:7001 -p 2379:2379 -p 2380:2380",
+                " sgarlick987/etcd:latest"
               ]
             ]
           }

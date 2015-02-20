@@ -1,0 +1,153 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "v1.0 Creates Security Group for ETCD Services.",
+  "Parameters": {
+    "Environment": {
+      "Description": "Name of the environment to launch this bastion host into.",
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "8",
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    },
+    "Vpc": {
+      "Description": "VPC to launch this subnet into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
+    }
+  },
+  "Outputs": {
+    "InstanceSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroup",
+          "Outputs.InstanceSecurityGroup"
+        ]
+      }
+    },
+    "LoadBalancerSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroup",
+          "Outputs.LoadBalancerSecurityGroup"
+        ]
+      }
+    }
+  },
+  "Resources": {
+    "SecurityGroup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Vpc": {
+            "Ref": "Vpc"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "InstancePort": "4001"
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "ServerIngressA": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "7001",
+        "ToPort": "7001",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "ServerIngressB": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "4001",
+        "ToPort": "4001",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "ServerIngressC": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "2380",
+        "ToPort": "2380",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "ServerIngressD": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "2379",
+        "ToPort": "2379",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    }
+  }
+}

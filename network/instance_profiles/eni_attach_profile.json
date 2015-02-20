@@ -51,7 +51,6 @@
                     "ec2:DescribeInstances"
                   ],
                   "Resource": "*"
-
                 }
               ]
             }

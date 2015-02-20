@@ -106,7 +106,7 @@
         "IpProtocol": "udp",
         "ToPort": "123"
       }
-    },    
+    },
     "SyslogIngress": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {

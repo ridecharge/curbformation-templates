@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Required Networking Machines Services.",
+  "Description": "v1.0 Creates Required Networking Services Services.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch these services into.",
@@ -114,7 +114,7 @@
     }
   },
   "Resources": {
-    "InfrastructureMachines": {
+    "InfrastructureServices": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -183,14 +183,14 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/machines/machine.json"
+              "network/services/vpc_services.json"
             ]
           ]
         },
         "TimeoutInMinutes": "10"
       }
     },
-    "ApplicationMachines": {
+    "ApplicationServices": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -259,7 +259,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/machines/machine.json"
+              "network/services/vpc_services.json"
             ]
           ]
         },
@@ -271,7 +271,7 @@
     "InfrastructureInternalBastionSecurityGroup": {
       "Value": {
         "Fn::GetAtt": [
-          "InfrastructureMachines",
+          "InfrastructureServices",
           "Outputs.InternalBastionSecurityGroup"
         ]
       }
@@ -279,7 +279,7 @@
     "ApplicationInternalBastionSecurityGroup": {
       "Value": {
         "Fn::GetAtt": [
-          "ApplicationMachines",
+          "ApplicationServices",
           "Outputs.InternalBastionSecurityGroup"
         ]
       }

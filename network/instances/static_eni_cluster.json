@@ -20,6 +20,13 @@
     "LogglyToken": {
       "Type": "String"
     },
+    "Role": {
+      "Type": "String",
+      "AllowedValues": [
+        "ntp",
+        "etcd"
+      ]
+    },
     "Vpc": {
       "Description": "VPC for this nat.",
       "Type": "AWS::EC2::VPC::Id"
@@ -32,7 +39,7 @@
         "application"
       ]
     },
-    "PrivateSubnets": {
+    "Subnets": {
       "Description": "Subnets to associate private routing.",
       "Type": "String"
     },
@@ -63,7 +70,7 @@
     "BastionSecurityGroup": {
       "Type": "String"
     },
-    "NTPSecurityGroup": {
+    "SecurityGroup": {
       "Type": "String"
     },
     "ImageId": {
@@ -74,32 +81,91 @@
     },
     "InstanceProfile": {
       "Type": "String"
+    },
+    "CreateForVPC": {
+      "Type": "String",
+      "AllowedValues": [
+        "application",
+        "infrastructure",
+        "both"
+      ]
+    },
+    "UserData": {
+      "Type": "String"
     }
   },
   "Conditions": {
-    "CreateNTPInstances": {
-      "Fn::Equals": [
+    "CreateInstances": {
+      "Fn::Or": [
         {
-          "Ref": "VpcName"
+          "Fn::Equals": [
+            {
+              "Ref": "VpcName"
+            },
+            {
+              "Ref": "CreateForVPC"
+            }
+          ]
         },
-        "infrastructure"
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "VpcName"
+            },
+            "both"
+          ]
+        }
       ]
     }
   },
+  "Mappings": {
+    "RoleMappings": {
+      "ntp": {
+        "IpLastDigits": "5",
+        "NumPairs": "1"
+      },
+      "etcd": {
+        "IpLastDigits": "6,7,8",
+        "NumPairs": "3"
+      }
+    }
+  },
   "Resources": {
-    "NTPNetworkInterfaces": {
-      "Condition": "CreateNTPInstances",
+    "NetworkInterfaces": {
+      "Condition": "CreateInstances",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
           },
-          "Subnets": {
-            "Ref": "PrivateSubnets"
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           },
-          "Role": "ntp",
-          "IpLastDigit": "5",
+          "Subnets": {
+            "Ref": "Subnets"
+          },
+          "Role": {
+            "Ref": "Role"
+          },
+          "IpLastDigits": {
+            "Fn::FindInMap": [
+              "RoleMappings",
+              {
+                "Ref": "Role"
+              },
+              "IpLastDigits"
+            ]
+          },
+          "NumPairs": {
+            "Fn::FindInMap": [
+              "RoleMappings",
+              {
+                "Ref": "Role"
+              },
+              "NumPairs"
+            ]
+          },
           "CidrBlockPrefix": {
             "Ref": "CidrBlockPrefix"
           },
@@ -108,7 +174,7 @@
               ",",
               [
                 {
-                  "Ref": "NTPSecurityGroup"
+                  "Ref": "SecurityGroup"
                 },
                 {
                   "Ref": "BastionSecurityGroup"
@@ -124,16 +190,16 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/static_eni_pair.json"
+              "network/interfaces/static_eni_pairs.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "10"
       }
     },
-    "NTPInstances": {
-      "Condition": "CreateNTPInstances",
-      "DependsOn": "NTPNetworkInterfaces",
+    "Instances": {
+      "Condition": "CreateInstances",
+      "DependsOn": "NetworkInterfaces",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -145,7 +211,7 @@
               ",",
               [
                 {
-                  "Ref": "NTPSecurityGroup"
+                  "Ref": "SecurityGroup"
                 },
                 {
                   "Ref": "BastionSecurityGroup"
@@ -154,7 +220,7 @@
             ]
           },
           "Subnets": {
-            "Ref": "PrivateSubnets"
+            "Ref": "Subnets"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
@@ -183,16 +249,11 @@
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "Type": "ntp",
+          "Role": {
+            "Ref": "Role"
+          },
           "UserData": {
-            "Fn::Join": [
-              "",
-              [
-                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
-                "sgarlick987/aws-startup-utils ./attach_eni.py\n",
-                "/root/config_network_interface.sh eth1"
-              ]
-            ]
+            "Ref": "UserData"
           }
         },
         "TemplateURL": {
@@ -202,7 +263,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/autoscaling_pair.json"
+              "network/instances/autoscaling.json"
             ]
           ]
         },

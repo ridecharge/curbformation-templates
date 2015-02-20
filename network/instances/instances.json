@@ -107,10 +107,20 @@
       "DependsOn": "NATInstances",
       "Properties": {
         "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              " ",
+              [
+                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                "sgarlick987/aws-startup-utils ./register_dns.py"
+              ]
+            ]
+          },
           "Environment": {
             "Ref": "Environment"
           },
-          "PublicSubnets": {
+          "Role": "bastion",
+          "Subnets": {
             "Ref": "PublicSubnets"
           },
           "TemplateURLPrefix": {
@@ -131,11 +141,11 @@
           "VpcName": {
             "Ref": "VpcName"
           },
-          "ExternalBastionSecurityGroup": {
-            "Ref": "ExternalBastionSecurityGroup"
+          "BastionSecurityGroup": {
+            "Ref": "InternalBastionSecurityGroup"
           },
-          "PublicInternalHostedZoneInstanceProfile": {
-            "Ref": "PublicInternalHostedZoneInstanceProfile"
+          "SecurityGroup": {
+            "Ref": "ExternalBastionSecurityGroup"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
@@ -160,7 +170,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/bastions.json"
+              "network/instances/cluster.json"
             ]
           ]
         },
@@ -172,16 +182,28 @@
       "DependsOn": "NATInstances",
       "Properties": {
         "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
+                "sgarlick987/aws-startup-utils ./attach_eni.py\n",
+                "/root/config_network_interface.sh eth1"
+              ]
+            ]
+          },
           "Environment": {
             "Ref": "Environment"
           },
+          "CreateForVPC": "infrastructure",
+          "Role": "ntp",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "PrivateSubnets": {
+          "Subnets": {
             "Ref": "PrivateSubnets"
           },
           "CidrBlockPrefix": {
@@ -190,7 +212,7 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
-          "NTPSecurityGroup": {
+          "SecurityGroup": {
             "Ref": "NTPSecurityGroup"
           },
           "Vpc": {
@@ -228,24 +250,35 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/ntps.json"
+              "network/instances/static_eni_cluster.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "10"
       }
     },
     "NATInstances": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "service iptables-persistent start\n",
+                "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                " sgarlick987/aws-startup-utils ./nat_monitor.py"
+              ]
+            ]
+          },
           "Environment": {
             "Ref": "Environment"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "PublicSubnets": {
+          "Role": "nat",
+          "Subnets": {
             "Ref": "PublicSubnets"
           },
           "TemplateURLPrefix": {
@@ -269,13 +302,13 @@
           "PublicInternalHostedZone": {
             "Ref": "PublicInternalHostedZone"
           },
-          "NATSecurityGroup": {
+          "SecurityGroup": {
             "Ref": "NATSecurityGroup"
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "NATInstanceProfile": {
+          "InstanceProfile": {
             "Ref": "NATInstanceProfile"
           },
           "AvailabilityZones": {
@@ -292,11 +325,11 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/nats.json"
+              "network/instances/cluster.json"
             ]
           ]
         },
-        "TimeoutInMinutes": "30"
+        "TimeoutInMinutes": "10"
       }
     }
   }

@@ -68,17 +68,18 @@
       "Type": "String",
       "Default": ""
     },
-    "Type": {
+    "Role": {
       "Type": "String",
       "AllowedValues": [
         "nat",
         "bastion",
-        "ntp"
+        "ntp",
+        "etcd"
       ]
     }
   },
   "Mappings": {
-    "Types": {
+    "Roles": {
       "nat": {
         "public": true,
         "healthchecktype": "ELB"
@@ -90,6 +91,10 @@
       "ntp": {
         "public": false,
         "healthchecktype": "EC2"
+      },
+      "etcd": {
+        "public": false,
+        "healthchecktype": "ELB"
       }
     }
   },
@@ -98,9 +103,9 @@
       "Fn::Equals": [
         {
           "Fn::FindInMap": [
-            "Types",
+            "Roles",
             {
-              "Ref": "Type"
+              "Ref": "Role"
             },
             "healthchecktype"
           ]
@@ -147,7 +152,7 @@
                 "Ref": "VpcName"
               },
               {
-                "Ref": "Type"
+                "Ref": "Role"
               }
             ]
           ]
@@ -162,7 +167,7 @@
           {
             "Key": "Role",
             "Value": {
-              "Ref": "Type"
+              "Ref": "Role"
             }
           }
         ]
@@ -173,9 +178,9 @@
       "Properties": {
         "AssociatePublicIpAddress": {
           "Fn::FindInMap": [
-            "Types",
+            "Roles",
             {
-              "Ref": "Type"
+              "Ref": "Role"
             },
             "public"
           ]
@@ -255,9 +260,9 @@
         "HealthCheckGracePeriod": "30",
         "HealthCheckType": {
           "Fn::FindInMap": [
-            "Types",
+            "Roles",
             {
-              "Ref": "Type"
+              "Ref": "Role"
             },
             "healthchecktype"
           ]
@@ -284,7 +289,7 @@
                     "Ref": "VpcName"
                   },
                   {
-                    "Ref": "Type"
+                    "Ref": "Role"
                   }
                 ]
               ]
@@ -301,7 +306,7 @@
           {
             "Key": "Role",
             "Value": {
-              "Ref": "Type"
+              "Ref": "Role"
             },
             "PropagateAtLaunch": "true"
           },
