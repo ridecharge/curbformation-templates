@@ -174,7 +174,7 @@
             ]
           },
           "Scheme": "internal",
-          "InstanceType": "c4.large",
+          "InstanceType": "m3.medium",
           "ApplicationName": {
             "Ref": "ApplicationName"
           },

@@ -13,9 +13,10 @@
     "InstanceType": {
       "Description": "Instance type for instance pair.",
       "Type": "String",
-      "Default": "c4.large",
+      "Default": "m3.medium",
       "AllowedValues": [
-        "c4.large"
+        "c4.large",
+        "m3.medium"
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
@@ -73,8 +74,7 @@
       "AllowedValues": [
         "nat",
         "bastion",
-        "ntp",
-        "etcd"
+        "ntp"
       ]
     }
   },
@@ -91,10 +91,6 @@
       "ntp": {
         "public": false,
         "healthchecktype": "EC2"
-      },
-      "etcd": {
-        "public": false,
-        "healthchecktype": "ELB"
       }
     }
   },

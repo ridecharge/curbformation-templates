@@ -53,7 +53,7 @@
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
-          "InstancePort": "4001"
+          "InstancePort": "8500"
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -69,12 +69,12 @@
         "TimeoutInMinutes": "5"
       }
     },
-    "ServerIngressA": {
+    "ServerIngressHttp": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
-        "FromPort": "7001",
-        "ToPort": "7001",
+        "FromPort": "8500",
+        "ToPort": "8500",
         "GroupId": {
           "Fn::GetAtt": [
             "SecurityGroup",
@@ -89,12 +89,12 @@
         }
       }
     },
-    "ServerIngressB": {
+    "ServerIngressRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
-        "FromPort": "4001",
-        "ToPort": "4001",
+        "FromPort": "8400",
+        "ToPort": "8400",
         "GroupId": {
           "Fn::GetAtt": [
             "SecurityGroup",
@@ -109,12 +109,12 @@
         }
       }
     },
-    "ServerIngressC": {
+    "ServerIngressServerRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
-        "FromPort": "2380",
-        "ToPort": "2380",
+        "FromPort": "8300",
+        "ToPort": "8300",
         "GroupId": {
           "Fn::GetAtt": [
             "SecurityGroup",
@@ -129,12 +129,52 @@
         }
       }
     },
-    "ServerIngressD": {
+    "ServerIngressSerfLan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
-        "FromPort": "2379",
-        "ToPort": "2379",
+        "FromPort": "8301",
+        "ToPort": "8301",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "ServerIngressSefWan": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "8302",
+        "ToPort": "8302",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "ServerIngressDNS": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "8600",
+        "ToPort": "8600",
         "GroupId": {
           "Fn::GetAtt": [
             "SecurityGroup",

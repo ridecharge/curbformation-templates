@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a ETCD service",
+  "Description": "v1.0 Creates a Consul service",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -63,7 +63,29 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/security_groups/etcd_security.json"
+              "apps/security_groups/consul_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "InstanceProfile": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/profiles/consul_profile.json"
             ]
           ]
         },
@@ -96,6 +118,12 @@
               ]
             ]
           },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [
               "Security",
@@ -115,20 +143,20 @@
             "Ref": "NewRelicToken"
           },
           "Scheme": "internal",
-          "InstanceType": "c4.large",
-          "ImageId": "ami-a64a1dce",
+          "InstanceType": "m3.medium",
+          "ImageId": "ami-7621781e",
           "MinSize": "6",
           "MaxSize": "6",
           "DesiredCapacity": "6",
-          "DeployMaxBatchSize": "5",
+          "DeployMaxBatchSize": "1",
           "DeployMinInstancesInService": "5",
-          "InstancePort": "4001",
-          "InstanceHealthCheck": "/version",
+          "InstancePort": "8500",
+          "InstanceHealthCheck": "/v1/agent/self",
+          "Cooldown": "30",
           "UserData": {
             "Fn::Join": [
               "",
               [
-                "HOST_IP=$(hostname --all-ip-addresses | awk '{print $1}')\n",
                 "docker run",
                 " -d",
                 " --restart=always",
@@ -136,10 +164,9 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                " -e HOST_IP=$HOST_IP",
-                " -e ETCD_DISCOVERY=https://discovery.etcd.io/3eef4c90837457920e8a413f4eba682d",
-                " -p 4001:4001 -p 7001:7001 -p 2379:2379 -p 2380:2380",
-                " sgarlick987/etcd:latest"
+                " -p 8500:8500 -p 8400:8400 -p 8300:8300 -p 8600:8600",
+                " -p 8303:8303 -p 8302:8302 -p 8301:8301",
+                " sgarlick987/consul:latest"
               ]
             ]
           }

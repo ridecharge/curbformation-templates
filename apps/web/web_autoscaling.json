@@ -103,6 +103,14 @@
     "InstanceHealthCheck": {
       "Type": "String",
       "Default": "/health"
+    },
+    "Cooldown": {
+      "Type": "Number",
+      "Default": "30"
+    },
+    "UpdatePauseTime": {
+      "Type": "String",
+      "Default": "PT0S"
     }
   },
   "Conditions": {
@@ -264,7 +272,9 @@
           "MaxBatchSize": {
             "Ref": "DeployMaxBatchSize"
           },
-          "PauseTime": "PT2M30S"
+          "PauseTime": {
+            "Ref": "UpdatePauseTime"
+          }
         }
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
@@ -277,7 +287,9 @@
             "Ref": "LoadBalancer"
           }
         ],
-        "Cooldown": "30",
+        "Cooldown": {
+          "Ref": "Cooldown"
+        },
         "DesiredCapacity": {
           "Ref": "DesiredCapacity"
         },
@@ -322,7 +334,9 @@
           },
           {
             "Key": "Role",
-            "Value": "ApplicationName",
+            "Value": {
+              "Ref": "ApplicationName"
+            },
             "PropagateAtLaunch": "true"
           }
         ]

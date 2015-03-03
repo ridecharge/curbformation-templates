@@ -25,17 +25,13 @@
     "Role": {
       "Type": "String",
       "AllowedValues": [
-        "ntp",
-        "etcd"
+        "ntp"
       ]
     },
     "IpLastDigit": {
       "Type": "Number",
       "AllowedValues": [
-        "5",
-        "6",
-        "7",
-        "8"
+        "5"
       ]
     },
     "SecurityGroups": {
