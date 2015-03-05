@@ -14,16 +14,16 @@
       "Description": "Template URL prefix for nested stacks.",
       "Type": "String"
     },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
     "PublicInternalHostedZone": {
       "Description": "Route53 Public Internal Hosted Zone for VPC.",
       "Type": "String"
     },
     "PublicExternalHostedZone": {
       "Description": "Route53 Public External Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
       "Type": "String"
     },
     "PrivateInternalDomain": {
@@ -139,23 +139,23 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
-          "PrivateInternalHostedZone": {
-            "Ref": "PrivateInternalHostedZone"
-          },
           "PublicInternalHostedZone": {
             "Ref": "PublicInternalHostedZone"
           },
           "PublicExternalHostedZone": {
             "Ref": "PublicExternalHostedZone"
           },
-          "PrivateInternalDomain": {
-            "Ref": "PrivateInternalDomain"
-          },
           "PublicInternalDomain": {
             "Ref": "PublicInternalDomain"
           },
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
+          },
+          "PrivateInternalHostedZone": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "PrivateInternalDomain": {
+            "Ref": "PrivateInternalDomain"
           },
           "VpcName": {
             "Ref": "InfrastructureVpcName"

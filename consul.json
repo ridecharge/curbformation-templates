@@ -23,6 +23,13 @@
     "NewRelicToken": {
       "Type": "String"
     },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
     "InfrastructureVPCPrivateSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
@@ -92,6 +99,44 @@
         "TimeoutInMinutes": "5"
       }
     },
+    "DNSRecord": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "HostedZoneId": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "LoadBalancerScheme": "internal",
+          "LoadBalancerDNSName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.LoadBalancerDNSName"
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
     "Instances": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
@@ -144,7 +189,7 @@
           },
           "Scheme": "internal",
           "InstanceType": "m3.medium",
-          "ImageId": "ami-7621781e",
+          "ImageId": "ami-5afaa232",
           "MinSize": "6",
           "MaxSize": "6",
           "DesiredCapacity": "6",
@@ -152,8 +197,10 @@
           "DeployMinInstancesInService": "5",
           "InstancePort": "8500",
           "InstanceHealthCheck": "/v1/agent/self",
+          "HealthCheckGracePeriod": "60",
           "Cooldown": "30",
-          "UserData": {
+          "UpdatePauseTime": "PT3M1S",
+          "UserData": { 
             "Fn::Join": [
               "",
               [
@@ -164,8 +211,10 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                " -p 8500:8500 -p 8400:8400 -p 8300:8300 -p 8600:8600",
-                " -p 8303:8303 -p 8302:8302 -p 8301:8301",
+                " -p 8500:8500/tcp -p 8400:8400/tcp -p 8300:8300/tcp -p 8600:8600/tcp",
+                " -p 8303:8303/tcp -p 8302:8302/tcp -p 8301:8301/tcp",
+                " -p 8500:8500/udp -p 8400:8400/udp -p 8300:8300/udp -p 8600:8600/udp",
+                " -p 8303:8303/udp -p 8302:8302/udp -p 8301:8301/udp",
                 " sgarlick987/consul:latest"
               ]
             ]

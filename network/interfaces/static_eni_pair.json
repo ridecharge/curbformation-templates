@@ -38,6 +38,29 @@
       "Type": "CommaDelimitedList"
     }
   },
+  "Outputs": {
+    "IpAddresses": {
+      "Value": {
+        "Fn::Join": [
+          ",",
+          [
+            {
+              "Fn::GetAtt": [
+                "NetworkInterfaceA",
+                "PrimaryPrivateIpAddress"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "NetworkInterfaceB",
+                "PrimaryPrivateIpAddress"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
   "Resources": {
     "NetworkInterfaceA": {
       "Type": "AWS::EC2::NetworkInterface",

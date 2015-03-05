@@ -151,6 +151,58 @@
         "TimeoutInMinutes": "5"
       }
     },
+    "NetworkInterfaces": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "PrivateSubnets": {
+            "Ref": "PrivateSubnets"
+          },
+          "CidrBlockPrefix": {
+            "Ref": "CidrBlockPrefix"
+          },
+          "VpcName": {
+            "Ref": "VpcName"
+          },
+          "NTPSecurityGroup": {
+            "Fn::GetAtt": [
+              "SecurityGroups",
+              "Outputs.NTPSecurityGroup"
+            ]
+          },
+          "BastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "SecurityGroups",
+              "Outputs.InternalBastionSecurityGroup"
+            ]
+          },
+          "PrivateInternalDomain": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "PrivateInternalHostedZone": {
+            "Ref": "PrivateInternalHostedZone"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/interfaces/static_interfaces.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
     "InstanceProfiles": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
@@ -275,6 +327,12 @@
           },
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
+          },
+          "PrivateInternalHostedZone": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "PrivateInternalDomain": {
+            "Ref": "PrivateInternalDomain"
           },
           "LogglyToken": {
             "Ref": "LogglyToken"

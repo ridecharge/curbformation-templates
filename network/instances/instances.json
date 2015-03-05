@@ -20,6 +20,13 @@
     "LogglyToken": {
       "Type": "String"
     },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
     "PrivateSubnets": {
       "Description": "Subnets for private instances.",
       "Type": "String"
@@ -101,6 +108,16 @@
       "Type": "String"
     }
   },
+  "Conditions": {
+    "CreateInfraInstances": {
+      "Fn::Equals": [
+        {
+          "Ref": "VpcName"
+        },
+        "infrastructure"
+      ]
+    }
+  },
   "Resources": {
     "BastionInstances": {
       "Type": "AWS::CloudFormation::Stack",
@@ -180,6 +197,7 @@
     "NTPInstances": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": "NATInstances",
+      "Condition": "CreateInfraInstances",
       "Properties": {
         "Parameters": {
           "UserData": {
@@ -195,7 +213,6 @@
           "Environment": {
             "Ref": "Environment"
           },
-          "CreateForVPC": "infrastructure",
           "Role": "ntp",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
@@ -205,9 +222,6 @@
           },
           "Subnets": {
             "Ref": "PrivateSubnets"
-          },
-          "CidrBlockPrefix": {
-            "Ref": "CidrBlockPrefix"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
@@ -250,7 +264,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/static_eni_cluster.json"
+              "network/instances/cluster.json"
             ]
           ]
         },

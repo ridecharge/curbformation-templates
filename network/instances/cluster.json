@@ -14,7 +14,8 @@
       "Type": "String",
       "AllowedValues": [
         "bastion",
-        "nat"
+        "nat",
+        "ntp"
       ]
     },
     "TemplateURLPrefix": {

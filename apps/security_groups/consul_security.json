@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Security Group for ETCD Services.",
+  "Description": "v1.0 Creates Security Group for Consul Services.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch this bastion host into.",
@@ -72,7 +72,7 @@
     "ServerIngressHttp": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8500",
         "ToPort": "8500",
         "GroupId": {
@@ -92,7 +92,7 @@
     "ServerIngressRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8400",
         "ToPort": "8400",
         "GroupId": {
@@ -112,7 +112,7 @@
     "ServerIngressServerRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8300",
         "ToPort": "8300",
         "GroupId": {
@@ -132,7 +132,7 @@
     "ServerIngressSerfLan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8301",
         "ToPort": "8301",
         "GroupId": {
@@ -152,7 +152,7 @@
     "ServerIngressSefWan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8302",
         "ToPort": "8302",
         "GroupId": {
@@ -169,10 +169,10 @@
         }
       }
     },
-    "ServerIngressDNS": {
+    "ServerIngressDns": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "tcp",
+        "IpProtocol": "-1",
         "FromPort": "8600",
         "ToPort": "8600",
         "GroupId": {

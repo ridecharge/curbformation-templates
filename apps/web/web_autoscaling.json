@@ -111,6 +111,10 @@
     "UpdatePauseTime": {
       "Type": "String",
       "Default": "PT0S"
+    },
+    "HealthCheckGracePeriod": {
+      "Type": "Number",
+      "Default": "30"
     }
   },
   "Conditions": {
@@ -121,6 +125,16 @@
         },
         ""
       ]
+    }
+  },
+  "Outputs": {
+    "LoadBalancerDNSName": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LoadBalancer",
+          "DNSName"
+        ]
+      }
     }
   },
   "Resources": {
@@ -293,7 +307,9 @@
         "DesiredCapacity": {
           "Ref": "DesiredCapacity"
         },
-        "HealthCheckGracePeriod": "30",
+        "HealthCheckGracePeriod": {
+          "Ref": "HealthCheckGracePeriod"
+        },
         "HealthCheckType": "ELB",
         "LaunchConfigurationName": {
           "Ref": "AsgLaunchConfiguration"
