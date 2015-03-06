@@ -192,7 +192,7 @@
           },
           "Scheme": "internal",
           "InstanceType": "m3.medium",
-          "ImageId": "ami-f8fca790",
+          "ImageId": "ami-1093c978",
           "MinSize": "6",
           "MaxSize": "6",
           "DesiredCapacity": "6",
