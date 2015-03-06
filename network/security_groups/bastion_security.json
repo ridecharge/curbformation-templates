@@ -45,7 +45,7 @@
         ]
       }
     },
-    "TcpServerIngressSerfLan": {
+    "ExternalTcpConsulServerIngressSerfLan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
@@ -54,12 +54,10 @@
         "GroupId": {
           "Ref": "ExternalBastionSecurityGroup"
         },
-        "SourceSecurityGroupId": {
-          "Ref": "InternalBastionSecurityGroup"
-        }
+        "CidrIp": "10.0.0.0/8"
       }
     },
-    "UdpServerIngressSerfLan": {
+    "ExternalUdpConsulServerIngressSerfLan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "udp",
@@ -68,9 +66,7 @@
         "GroupId": {
           "Ref": "ExternalBastionSecurityGroup"
         },
-        "SourceSecurityGroupId": {
-          "Ref": "InternalBastionSecurityGroup"
-        }
+        "CidrIp": "10.0.0.0/8"
       }
     },
     "InternalBastionSecurityGroup": {
@@ -90,6 +86,30 @@
             }
           }
         ]
+      }
+    },
+    "InternalTcpConsulServerIngressSerfLan": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": "8301",
+        "ToPort": "8301",
+        "GroupId": {
+          "Ref": "InternalBastionSecurityGroup"
+        },
+        "CidrIp": "10.0.0.0/8"
+      }
+    },
+    "InternalUdpConsulServerIngressSerfLan": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "udp",
+        "FromPort": "8301",
+        "ToPort": "8301",
+        "GroupId": {
+          "Ref": "InternalBastionSecurityGroup"
+        },
+        "CidrIp": "10.0.0.0/8"
       }
     }
   }

@@ -84,35 +84,10 @@
             "Outputs.InstanceSecurityGroup"
           ]
         },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
+        "CidrIp": "10.0.0.0/8"
       }
     },
     "TcpServerIngressRpc": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "tcp",
-        "FromPort": "8400",
-        "ToPort": "8400",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
-      }
-    },
-    "TcpServerIngressServerRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "IpProtocol": "tcp",
@@ -124,120 +99,7 @@
             "Outputs.InstanceSecurityGroup"
           ]
         },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
-      }
-    },
-    "TcpServerIngressSerfLan": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "tcp",
-        "FromPort": "8301",
-        "ToPort": "8301",
-        "GroupId": {
-          "Ref": "BastionSecurityGroup"
-        },
-        "SourceSecurityGroupId": {
-          "Ref": "BastionSecurityGroup"
-        }
-      }
-    },
-    "TcpServerIngressSefWan": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "tcp",
-        "FromPort": "8302",
-        "ToPort": "8302",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
-      }
-    },
-    "TcpServerIngressDns": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "tcp",
-        "FromPort": "8600",
-        "ToPort": "8600",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
-      }
-    },
-    "UdpServerIngressSerfLan": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "udp",
-        "FromPort": "8301",
-        "ToPort": "8301",
-        "GroupId": {
-          "Ref": "BastionSecurityGroup"
-        },
-        "SourceSecurityGroupId": {
-          "Ref": "BastionSecurityGroup"
-        }
-      }
-    },
-    "UdpServerIngressSefWan": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "udp",
-        "FromPort": "8302",
-        "ToPort": "8302",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
-      }
-    },
-    "UdpServerIngressDns": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "IpProtocol": "udp",
-        "FromPort": "8600",
-        "ToPort": "8600",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        },
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
-        }
+        "CidrIp": "10.0.0.0/8"
       }
     }
   }
