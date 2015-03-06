@@ -61,6 +61,9 @@
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
+          },
+          "BastionSecurityGroup": {
+            "Ref": "InfrastructureInternalBastionSecurityGroup"
           }
         },
         "TemplateURL": {
@@ -189,7 +192,7 @@
           },
           "Scheme": "internal",
           "InstanceType": "m3.medium",
-          "ImageId": "ami-5afaa232",
+          "ImageId": "ami-f8fca790",
           "MinSize": "6",
           "MaxSize": "6",
           "DesiredCapacity": "6",
@@ -199,26 +202,7 @@
           "InstanceHealthCheck": "/v1/agent/self",
           "HealthCheckGracePeriod": "60",
           "Cooldown": "30",
-          "UpdatePauseTime": "PT3M1S",
-          "UserData": { 
-            "Fn::Join": [
-              "",
-              [
-                "docker run",
-                " -d",
-                " --restart=always",
-                " --name ",
-                {
-                  "Ref": "ApplicationName"
-                },
-                " -p 8500:8500/tcp -p 8400:8400/tcp -p 8300:8300/tcp -p 8600:8600/tcp",
-                " -p 8303:8303/tcp -p 8302:8302/tcp -p 8301:8301/tcp",
-                " -p 8500:8500/udp -p 8400:8400/udp -p 8300:8300/udp -p 8600:8600/udp",
-                " -p 8303:8303/udp -p 8302:8302/udp -p 8301:8301/udp",
-                " sgarlick987/consul:latest"
-              ]
-            ]
-          }
+          "UpdatePauseTime": "PT3M1S"
         },
         "TemplateURL": {
           "Fn::Join": [

@@ -19,6 +19,9 @@
     },
     "TemplateURLPrefix": {
       "Type": "String"
+    },
+    "BastionSecurityGroup": {
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -69,10 +72,10 @@
         "TimeoutInMinutes": "5"
       }
     },
-    "ServerIngressHttp": {
+    "TcpServerIngressHttp": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "8500",
         "ToPort": "8500",
         "GroupId": {
@@ -89,10 +92,10 @@
         }
       }
     },
-    "ServerIngressRpc": {
+    "TcpServerIngressRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "8400",
         "ToPort": "8400",
         "GroupId": {
@@ -109,10 +112,10 @@
         }
       }
     },
-    "ServerIngressServerRpc": {
+    "TcpServerIngressServerRpc": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "8300",
         "ToPort": "8300",
         "GroupId": {
@@ -129,30 +132,24 @@
         }
       }
     },
-    "ServerIngressSerfLan": {
+    "TcpServerIngressSerfLan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "8301",
         "ToPort": "8301",
         "GroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
+          "Ref": "BastionSecurityGroup"
         },
         "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecurityGroup",
-            "Outputs.InstanceSecurityGroup"
-          ]
+          "Ref": "BastionSecurityGroup"
         }
       }
     },
-    "ServerIngressSefWan": {
+    "TcpServerIngressSefWan": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "8302",
         "ToPort": "8302",
         "GroupId": {
@@ -169,10 +166,64 @@
         }
       }
     },
-    "ServerIngressDns": {
+    "TcpServerIngressDns": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
+        "FromPort": "8600",
+        "ToPort": "8600",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "UdpServerIngressSerfLan": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "udp",
+        "FromPort": "8301",
+        "ToPort": "8301",
+        "GroupId": {
+          "Ref": "BastionSecurityGroup"
+        },
+        "SourceSecurityGroupId": {
+          "Ref": "BastionSecurityGroup"
+        }
+      }
+    },
+    "UdpServerIngressSefWan": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "udp",
+        "FromPort": "8302",
+        "ToPort": "8302",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "SecurityGroup",
+            "Outputs.InstanceSecurityGroup"
+          ]
+        }
+      }
+    },
+    "UdpServerIngressDns": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "udp",
         "FromPort": "8600",
         "ToPort": "8600",
         "GroupId": {
