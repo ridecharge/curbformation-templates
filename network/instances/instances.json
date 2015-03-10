@@ -174,7 +174,17 @@
             "Ref": "LogglyToken"
           },
           "PublicInternalDomain": {
-            "Ref": "PublicInternalDomain"
+            "Fn::Join": [
+              ".",
+              [
+                {
+                  "Ref": "VpcName"
+                },
+                {
+                  "Ref": "PublicInternalDomain"
+                }
+              ]
+            ]
           },
           "PublicExternalDomain": {
             "Ref": "PublicExternalDomain"
