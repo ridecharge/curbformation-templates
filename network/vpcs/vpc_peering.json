@@ -80,7 +80,15 @@
         },
         "VpcId": {
           "Ref": "VpcB"
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          }
+        ]
       }
     },
     "VpcAPeeringRoutes": {
@@ -159,4 +167,3 @@
     }
   }
 }
-
