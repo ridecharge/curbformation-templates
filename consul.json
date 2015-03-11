@@ -43,6 +43,32 @@
     },
     "InfrastructureInternalBastionSecurityGroup": {
       "Type": "String"
+    },
+    "BaseImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    }
+  },
+  "Outputs": {
+    "ApplicationName": {
+      "Value": {
+        "Ref": "ApplicationName"
+      }
+    },
+    "Version": {
+      "Value": "latest"
+    },
+    "PublicEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "DNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
+    },
+    "PrivateEndPoint": {
+      "Value": "N/A"
     }
   },
   "Resources": {
@@ -192,7 +218,7 @@
           },
           "Scheme": "internal",
           "InstanceType": "m3.medium",
-          "ImageId": "ami-1093c978",
+          "ImageId": {"Ref":"BaseImageId"},
           "MinSize": "6",
           "MaxSize": "6",
           "DesiredCapacity": "6",

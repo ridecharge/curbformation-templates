@@ -30,6 +30,21 @@
       ]
     }
   },
+  "Outputs": {
+    "EndPoint": {
+      "Value": {
+        "Fn::If": [
+          "CreateCname",
+          {
+            "Ref": "CnameRecordSet"
+          },
+          {
+            "Ref": "AliasRecordSet"
+          }
+        ]
+      }
+    }
+  },
   "Conditions": {
     "CreateCname": {
       "Fn::Equals": [
