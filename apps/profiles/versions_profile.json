@@ -47,7 +47,8 @@
                   "Effect": "Allow",
                   "Action": [
                     "ec2:DescribeInstances",
-                    "cloudformation:DescribeStacks"
+                    "cloudformation:DescribeStacks",
+                    "autoscaling:DescribeTags"
                   ],
                   "Resource": "*"
                 }
