@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": " v1.0 Creates an Web Autoscaling group",
+  "Description": " v1.0 Creates an Web Autoscaling Group",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",

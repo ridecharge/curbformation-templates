@@ -23,6 +23,11 @@
     "NewRelicToken": {
       "Type": "String"
     },
+    "BaseImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    },
     "InfrastructureVPCPrivateSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
@@ -31,11 +36,51 @@
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
     },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
+    "PublicInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicInternalDomain": {
+      "Type": "String"
+    },
     "TemplateURLPrefix": {
       "Type": "String"
     },
     "InfrastructureInternalBastionSecurityGroup": {
       "Type": "String"
+    }
+  },
+  "Outputs": {
+    "ApplicationName": {
+      "Value": {
+        "Ref": "ApplicationName"
+      }
+    },
+    "Version": {
+      "Value": "latest"
+    },
+    "PublicEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "PublicDNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
+    },
+    "PrivateEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "PrivateDNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
     }
   },
   "Resources": {
@@ -86,6 +131,82 @@
           ]
         },
         "TimeoutInMinutes": "10"
+      }
+    },
+    "PrivateDNSRecord": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "HostedZoneId": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "LoadBalancerScheme": "internal",
+          "LoadBalancerDNSName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.LoadBalancerDNSName"
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "PublicDNSRecord": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "HostedZoneId": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PublicInternalDomain"
+          },
+          "LoadBalancerScheme": "internal",
+          "LoadBalancerDNSName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.LoadBalancerDNSName"
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "apps/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
       }
     },
     "InstanceProfile": {
@@ -190,7 +311,9 @@
           "Subnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
-          "ImageId": "ami-a64a1dce",
+          "ImageId": {
+            "Ref": "BaseImageId"
+          },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },

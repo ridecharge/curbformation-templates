@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Instance Profile for web applications",
+  "Description": "v1.0 Creates Instance Profile for Web Applications",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment this VPC represents",
@@ -43,13 +43,30 @@
         "Path": "/",
         "Policies": [
           {
+            "PolicyName": "DescribeInstances",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:DescribeInstances"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
             "PolicyName": "S3BucketAccess",
             "PolicyDocument": {
               "Statement": [
                 {
                   "Effect": "Allow",
-                  "Action": ["s3:*"],
-                  "Resource": [{
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
                       "Fn::Join": [
                         ":",
                         [
@@ -58,8 +75,12 @@
                             "Fn::Join": [
                               "-",
                               [
-                                {"Ref": "Environment"},
-                                {"Ref": "ApplicationName"},
+                                {
+                                  "Ref": "Environment"
+                                },
+                                {
+                                  "Ref": "ApplicationName"
+                                },
                                 "private"
                               ]
                             ]
@@ -76,8 +97,12 @@
                             "Fn::Join": [
                               "-",
                               [
-                                {"Ref": "Environment"},
-                                {"Ref": "ApplicationName"},
+                                {
+                                  "Ref": "Environment"
+                                },
+                                {
+                                  "Ref": "ApplicationName"
+                                },
                                 "private/*"
                               ]
                             ]
@@ -94,8 +119,12 @@
                             "Fn::Join": [
                               "-",
                               [
-                                {"Ref": "Environment"},
-                                {"Ref": "ApplicationName"},
+                                {
+                                  "Ref": "Environment"
+                                },
+                                {
+                                  "Ref": "ApplicationName"
+                                },
                                 "public"
                               ]
                             ]
@@ -112,8 +141,12 @@
                             "Fn::Join": [
                               "-",
                               [
-                                {"Ref": "Environment"},
-                                {"Ref": "ApplicationName"},
+                                {
+                                  "Ref": "Environment"
+                                },
+                                {
+                                  "Ref": "ApplicationName"
+                                },
                                 "pubic/*"
                               ]
                             ]

@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Route53 Record Sets for role.",
+  "Description": "v1.0 Creates Route53 Record Sets for a Web Application.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment for hosted zones.",

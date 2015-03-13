@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates Security Groups for web application",
+  "Description": "v1.0 Creates Security Groups for Web Application",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to create the security groups in.",

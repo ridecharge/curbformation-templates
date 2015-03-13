@@ -96,12 +96,6 @@
           },
           "ApplicationName": {
             "Ref": "ApplicationName"
-          },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
-          "BastionSecurityGroup": {
-            "Ref": "InfrastructureInternalBastionSecurityGroup"
           }
         },
         "TemplateURL": {
@@ -111,7 +105,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/security_groups/consul_security.json"
+              "apps/web/web_security.json"
             ]
           ]
         },
@@ -124,9 +118,6 @@
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
           }
         },
         "TemplateURL": {
@@ -136,7 +127,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_profile.json"
+              "apps/profiles/versions_profile.json"
             ]
           ]
         },
@@ -274,16 +265,15 @@
           "ImageId": {
             "Ref": "BaseImageId"
           },
-          "MinSize": "6",
-          "MaxSize": "6",
-          "DesiredCapacity": "6",
+          "MinSize": "2",
+          "MaxSize": "2",
+          "DesiredCapacity": "2",
           "DeployMaxBatchSize": "1",
-          "DeployMinInstancesInService": "5",
-          "InstancePort": "8500",
-          "InstanceHealthCheck": "/v1/agent/self",
-          "HealthCheckGracePeriod": "60",
-          "Cooldown": "30",
-          "UpdatePauseTime": "PT3M1S"
+          "DeployMinInstancesInService": "1",
+          "InstancePort": "8080",
+          "InstanceHealthCheck": "/health",
+          "HealthCheckGracePeriod": "30",
+          "Cooldown": "30"
         },
         "TemplateURL": {
           "Fn::Join": [
