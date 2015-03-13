@@ -273,7 +273,15 @@
           "InstancePort": "8080",
           "InstanceHealthCheck": "/health",
           "HealthCheckGracePeriod": "30",
-          "Cooldown": "30"
+          "Cooldown": "30",
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "docker run --link consul:consul -p 8080:8080 sgarlick987/cf-versions"
+              ]
+            ]
+          }
         },
         "TemplateURL": {
           "Fn::Join": [
