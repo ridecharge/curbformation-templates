@@ -19,7 +19,10 @@
     "HostedZoneId": {
       "Type": "String"
     },
-    "LoadBalancerDNSName": {
+    "LoadBalancerCanonicalHostedZoneNameID": {
+      "Type": "String"
+    },
+    "LoadBalancerDNSHostedZoneName": {
       "Type": "String"
     },
     "LoadBalancerScheme": {
@@ -101,7 +104,7 @@
         },
         "ResourceRecords": [
           {
-            "Ref": "LoadBalancerDNSName"
+            "Ref": "LoadBalancerDNSHostedZoneName"
           }
         ]
       }
@@ -112,11 +115,11 @@
       "Properties": {
         "AliasTarget": {
           "DNSName": {
-            "Ref": "LoadBalancerDNSName"
+            "Ref": "LoadBalancerDNSHostedZoneName"
           },
           "EvaluateTargetHealth": true,
           "HostedZoneId": {
-            "Ref": "HostedZoneId"
+            "Ref": "LoadBalancerCanonicalHostedZoneNameID"
           }
         },
         "HostedZoneId": {

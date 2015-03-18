@@ -63,18 +63,14 @@
         "Tags": [
           {
             "Key": "Role",
-            "Value": "Security"
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           },
           {
             "Key": "Environment",
             "Value": {
               "Ref": "Environment"
-            }
-          },
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "ApplicationName"
             }
           }
         ]
@@ -102,18 +98,14 @@
         "Tags": [
           {
             "Key": "Role",
-            "Value": "Security"
+            "Value": {
+              "Ref": "ApplicationName"
+            }
           },
           {
             "Key": "Environment",
             "Value": {
               "Ref": "Environment"
-            }
-          },
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "ApplicationName"
             }
           }
         ]

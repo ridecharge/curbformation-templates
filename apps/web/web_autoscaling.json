@@ -40,7 +40,11 @@
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "CommaDelimitedList"
     },
-    "Subnets": {
+    "LoadBalancerSubnets": {
+      "Description": "Subnets to launch NATs into.",
+      "Type": "List<AWS::EC2::Subnet::Id>"
+    },
+    "InstanceSubnets": {
       "Description": "Subnets to launch NATs into.",
       "Type": "List<AWS::EC2::Subnet::Id>"
     },
@@ -90,7 +94,11 @@
     },
     "LoadBalancerPort": {
       "Type": "Number",
-      "Default": "80"
+      "Default": "80",
+      "AllowedValues": [
+        "80",
+        "443"
+      ]
     },
     "InstancePort": {
       "Type": "Number",
@@ -117,24 +125,49 @@
       "Default": "30"
     }
   },
-  "Conditions": {
-    "NoInstanceProfile": {
-      "Fn::Equals": [
-        {
-          "Ref": "InstanceProfile"
-        },
-        ""
-      ]
-    }
-  },
   "Outputs": {
-    "LoadBalancerDNSName": {
+    "CanonicalHostedZoneNameID": {
       "Value": {
-        "Fn::GetAtt": [
-          "LoadBalancer",
-          "DNSName"
+        "Fn::If": [
+          "UseSSL",
+          {
+            "Fn::GetAtt": [
+              "LoadBalancer",
+              "CanonicalHostedZoneNameID"
+            ]
+          },
+          ""
         ]
       }
+    },
+    "DNSHostedZoneName": {
+      "Value": {
+        "Fn::If": [
+          "UseSSL",
+          {
+            "Fn::GetAtt": [
+              "LoadBalancer",
+              "CanonicalHostedZoneName"
+            ]
+          },
+          {
+            "Fn::GetAtt": [
+              "LoadBalancer",
+              "DNSName"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "Conditions": {
+    "UseSSL": {
+      "Fn::Equals": [
+        {
+          "Ref": "LoadBalancerPort"
+        },
+        "443"
+      ]
     }
   },
   "Resources": {
@@ -150,7 +183,7 @@
           "Ref": "Scheme"
         },
         "Subnets": {
-          "Ref": "Subnets"
+          "Ref": "LoadBalancerSubnets"
         },
         "HealthCheck": {
           "HealthyThreshold": "5",
@@ -186,7 +219,36 @@
             "LoadBalancerPort": {
               "Ref": "LoadBalancerPort"
             },
-            "Protocol": "HTTP"
+            "Protocol": {
+              "Fn::If": [
+                "UseSSL",
+                "HTTPS",
+                "HTTP"
+              ]
+            },
+            "SSLCertificateId": {
+              "Fn::If": [
+                "UseSSL",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":server-certificate/",
+                      {
+                        "Ref": "Environment"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Ref": "AWS::NoValue"
+                }
+              ]
+            }
           }
         ],
         "LoadBalancerName": {
@@ -227,15 +289,7 @@
       "Properties": {
         "EbsOptimized": false,
         "IamInstanceProfile": {
-          "Fn::If": [
-            "NoInstanceProfile",
-            {
-              "Ref": "AWS::NoValue"
-            },
-            {
-              "Ref": "InstanceProfile"
-            }
-          ]
+          "Ref": "InstanceProfile"
         },
         "ImageId": {
           "Ref": "ImageId"
@@ -321,7 +375,7 @@
           "Ref": "MaxSize"
         },
         "VPCZoneIdentifier": {
-          "Ref": "Subnets"
+          "Ref": "InstanceSubnets"
         },
         "Tags": [
           {

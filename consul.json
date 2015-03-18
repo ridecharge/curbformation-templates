@@ -160,10 +160,16 @@
             "Ref": "PrivateInternalDomain"
           },
           "LoadBalancerScheme": "internal",
-          "LoadBalancerDNSName": {
+          "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
-              "Outputs.LoadBalancerDNSName"
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
             ]
           }
         },
@@ -198,10 +204,16 @@
             "Ref": "PublicInternalDomain"
           },
           "LoadBalancerScheme": "internal",
-          "LoadBalancerDNSName": {
+          "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
-              "Outputs.LoadBalancerDNSName"
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
             ]
           }
         },
