@@ -25,13 +25,15 @@
     "Role": {
       "Type": "String",
       "AllowedValues": [
-        "ntp"
+        "ntp",
+        "bastion"
       ]
     },
     "IpLastDigit": {
       "Type": "Number",
       "AllowedValues": [
-        "5"
+        "5",
+        "6"
       ]
     },
     "SecurityGroups": {

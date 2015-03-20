@@ -23,21 +23,7 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "PublicInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicInternalDomain": {
-      "Type": "String"
-    },
-    "InfrastructureVPCPrivateSubnets": {
+    "InfrastructureVPCPublicSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
@@ -65,24 +51,77 @@
     },
     "Version": {
       "Value": "latest"
-    },
-    "PublicEndPoint": {
-      "Value": {
-        "Fn::GetAtt": [
-          "PublicDNSRecord",
-          "Outputs.EndPoint"
-        ]
-      }
-    },
-    "PrivateEndPoint": {
-      "Value": {
-        "Fn::GetAtt": [
-          "PrivateDNSRecord",
-          "Outputs.EndPoint"
-        ]
-      }
     }
   },
   "Resources": {
+    "Instances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": "bastion",
+          "Subnets": {
+            "Ref": "PublicSubnets"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "Vpc": {
+            "Ref": "Vpc"
+          },
+          "InstanceProfile": {
+            "Ref": "PublicInternalHostedZoneInstanceProfile"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "VpcName": {
+            "Ref": "VpcName"
+          },
+          "SecurityGroups": {
+            "Ref": "InternalBastionSecurityGroup"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "BaseImageId": {
+            "Ref": "BastionImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "PublicInternalDomain": {
+            "Fn::Join": [
+              ".",
+              [
+                {
+                  "Ref": "VpcName"
+                },
+                {
+                  "Ref": "PublicInternalDomain"
+                }
+              ]
+            ]
+          },
+          "PublicExternalDomain": {
+            "Ref": "PublicExternalDomain"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/instances/cluster.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "30"
+      }
+    }
   }
 }

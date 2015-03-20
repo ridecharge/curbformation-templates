@@ -120,19 +120,58 @@
               "Outputs.PrivateSubnets"
             ]
           },
+          "InfrastructureVPCPublicSubnets": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.PublicSubnets"
+            ]
+          },
           "InfrastructureVPCCidrBlockPrefix": {
             "Ref":"InfrastructureVPCCidrBlockPrefix"
           },
-          "InfrastructureVPCNTPSecurityGroup": {
-            "Fn::GetAtt": [
-              "InfrastructureVPC",
-              "Outputs.NTPSecurityGroup"
-            ]
-          },
-          "InfrastructureVPCBastionSecurityGroup": {
+          "InfrastructureVPCInternalBastionSecurityGroup": {
             "Fn::GetAtt": [
               "InfrastructureVPC",
               "Outputs.InternalBastionSecurityGroup"
+            ]
+          },
+          "InfrastructureVPCExternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.ExternalBastionSecurityGroup"
+            ]
+          },
+          "ApplicationVPCPrivateSubnets": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.PrivateSubnets"
+            ]
+          },
+          "ApplicationVPCPublicSubnets": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.PublicSubnets"
+            ]
+          },
+          "ApplicationVPCCidrBlockPrefix": {
+            "Ref":"ApplicationVPCCidrBlockPrefix"
+          },
+          "ApplicationVPCInternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.InternalBastionSecurityGroup"
+            ]
+          },
+          "ApplicationVPCExternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.ExternalBastionSecurityGroup"
+            ]
+          },
+          "NTPSecurityGroup": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.NTPSecurityGroup"
             ]
           }
         },
@@ -336,8 +375,24 @@
     "NTPIpAddresses": {
       "Value": {
         "Fn::GetAtt": [
-          "InfrastructureVPC",
+          "NetworkInterfaces",
           "Outputs.NTPIpAddresses"
+        ]
+      }
+    },
+    "InfrastructureBastionIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NetworkInterfaces",
+          "Outputs.InfrastructureBastionIpAddresses"
+        ]
+      }
+    },
+    "ApplicationBastionIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NetworkInterfaces",
+          "Outputs.ApplicationBastionIpAddresses"
         ]
       }
     }

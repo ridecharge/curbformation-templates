@@ -23,20 +23,6 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "PublicInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicInternalDomain": {
-      "Type": "String"
-    },
     "InfrastructureVPCPrivateSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
@@ -65,24 +51,86 @@
     },
     "Version": {
       "Value": "latest"
-    },
-    "PublicEndPoint": {
-      "Value": {
-        "Fn::GetAtt": [
-          "PublicDNSRecord",
-          "Outputs.EndPoint"
-        ]
-      }
-    },
-    "PrivateEndPoint": {
-      "Value": {
-        "Fn::GetAtt": [
-          "PrivateDNSRecord",
-          "Outputs.EndPoint"
-        ]
-      }
     }
   },
   "Resources": {
+    
+    "NTPInstances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": "NATInstances",
+      "Condition": "CreateInfraInstances",
+      "Properties": {
+        "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
+                "sgarlick987/aws-startup-utils ./attach_eni.py\n",
+                "/root/config_network_interface.sh eth1"
+              ]
+            ]
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": "ntp",
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "Subnets": {
+            "Ref": "PrivateSubnets"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "SecurityGroup": {
+            "Ref": "NTPSecurityGroup"
+          },
+          "Vpc": {
+            "Ref": "Vpc"
+          },
+          "InstanceProfile": {
+            "Ref": "ENIAttachInstanceProfile"
+          },
+          "VpcName": {
+            "Ref": "VpcName"
+          },
+          "BastionSecurityGroup": {
+            "Ref": "InternalBastionSecurityGroup"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "NTPImageId"
+          },
+          "PublicInternalHostedZone": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "PublicInternalDomain": {
+            "Ref": "PublicInternalDomain"
+          },
+          "PublicExternalDomain": {
+            "Ref": "PublicExternalDomain"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/instances/cluster.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    }
   }
 }

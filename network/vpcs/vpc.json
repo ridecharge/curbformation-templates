@@ -255,6 +255,14 @@
         ]
       }
     },
+    "ExternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroups",
+          "Outputs.ExternalBastionSecurityGroup"
+        ]
+      }
+    },
     "NTPSecurityGroup": {
       "Value": {
         "Fn::GetAtt": [

@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a Consul service",
+  "Description": "v1.0 Creates NAT services.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -11,10 +11,11 @@
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
     },
     "AvailabilityZones": {
-      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Description": "AvailabilityZones to launch services stacks into.",
       "Type": "String"
     },
     "ApplicationName": {
+      "Description": "Short name of the application.",
       "Type": "String"
     },
     "LogglyToken": {
@@ -23,26 +24,20 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "PublicInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicInternalDomain": {
-      "Type": "String"
-    },
     "InfrastructureVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
+      "Description": "Infrastructure Public Subnets to launch services into.",
       "Type": "String"
     },
     "InfrastructureVPC": {
-      "Description": "VPC to launch this subnet into.",
+      "Description": "Infrastructure VPC to launch services into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "ApplicationVPCPublicSubnets": {
+      "Description": "Application Public Subnets to launch services into.",
+      "Type": "String"
+    },
+    "ApplicationVPC": {
+      "Description": "Application VPC to launch services into.",
       "Type": "AWS::EC2::VPC::Id"
     },
     "TemplateURLPrefix": {
@@ -54,9 +49,24 @@
     "InfrastructureVPCCidrBlock": {
       "Type": "String"
     },
+    "ApplicationInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "ApplicationVPCCidrBlock": {
+      "Type": "String"
+    },
+    "InfrastructureVpcName": {
+      "Default": "infrastructure",
+      "Type": "String"
+    },
+    "ApplicationVpcName": {
+      "Default": "application",
+      "Type": "String"
+    },
     "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
+      "Default": "ami-62547b0a",
       "ConstraintDescription": "Must be a valid ami id"
     }
   },
@@ -93,7 +103,7 @@
         "TimeoutInMinutes": "30"
       }
     },
-    "Instances": {
+    "InfrastructureVPCInstances": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -113,33 +123,28 @@
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "Role": "nat",
+          "VpcName": "infrastructure",
+          "Role": {
+            "Ref": "ApplicationName"
+          },
           "Subnets": {
             "Ref": "InfrastructureVPCPublicSubnets"
           },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
-          "Vpc": {
-            "Ref": "InfrastructureVPC"
-          },
-          "VpcName": {
-            "Ref": "VpcName"
-          },
-          "BastionSecurityGroup": {
-            "Ref": "InternalBastionSecurityGroup"
-          },
-          "PublicInternalDomain": {
-            "Ref": "PublicInternalDomain"
-          },
-          "PublicExternalDomain": {
-            "Ref": "PublicExternalDomain"
-          },
-          "PublicInternalHostedZone": {
-            "Ref": "PublicInternalHostedZone"
-          },
-          "SecurityGroup": {
-            "Ref": "NATSecurityGroup"
+          "SecurityGroups": {
+            "Fn::Join": [
+              ",",
+              [
+                {
+                  "Ref": "InfrastructureInternalBastionSecurityGroup"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "InfrastructureVPCSecurity",
+                    "Outputs.SecurityGroup"
+                  ]
+                }
+              ]
+            ]
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
@@ -161,14 +166,84 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "services/web/web_autoscaling.json"
+              "services/infra/infra_autoscaling.json"
             ]
           ]
         },
         "TimeoutInMinutes": "10"
       }
     },
-    "Security": {
+    "ApplicationVPCInstances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "service iptables-persistent start\n",
+                "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                " sgarlick987/aws-startup-utils ./nat_monitor.py"
+              ]
+            ]
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "VpcName": "application",
+          "Subnets": {
+            "Ref": "ApplicationVPCPublicSubnets"
+          },
+          "SecurityGroups": {
+            "Fn::Join": [
+              ",",
+              [
+                {
+                  "Ref": "ApplicationInternalBastionSecurityGroup"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "ApplicationVPCSecurity",
+                    "Outputs.SecurityGroup"
+                  ]
+                }
+              ]
+            ]
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "InstanceProfile": {
+            "Ref": "InstanceProfile"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "ImageId"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/infra/infra_autoscaling.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    },
+    "InfrastructureVPCSecurity": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -180,6 +255,34 @@
           },
           "CidrBlock": {
             "Ref": "InfrastructureVPCCidrBlock"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/security_groups/nat_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "ApplicationVPCSecurity": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Vpc": {
+            "Ref": "ApplicationVPC"
+          },
+          "CidrBlock": {
+            "Ref": "ApplicationVPCCidrBlock"
           }
         },
         "TemplateURL": {
