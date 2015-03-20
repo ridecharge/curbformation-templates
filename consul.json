@@ -111,7 +111,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/security_groups/consul_security.json"
+              "services/security_groups/consul_security.json"
             ]
           ]
         },
@@ -136,7 +136,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_profile.json"
+              "services/web/web_profile.json"
             ]
           ]
         },
@@ -180,7 +180,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -224,7 +224,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -304,7 +304,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_autoscaling.json"
+              "services/web/web_autoscaling.json"
             ]
           ]
         },

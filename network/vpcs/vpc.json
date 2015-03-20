@@ -40,7 +40,48 @@
     }
   },
   "Resources": {
-    "VPC": {
+    "SecurityGroups": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "Vpc": {
+            "Ref": "Vpc"
+          },
+          "CidrBlock": {
+            "Fn::Join": [
+              ".",
+              [
+                {
+                  "Ref": "CidrBlockPrefix"
+                },
+                {
+                  "Ref": "CidrBlockPostfix"
+                }
+              ]
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/security_groups/security_groups.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "Vpc": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": {
@@ -102,7 +143,7 @@
       "Type": "AWS::EC2::VPCGatewayAttachment",
       "Properties": {
         "VpcId": {
-          "Ref": "VPC"
+          "Ref": "Vpc"
         },
         "InternetGatewayId": {
           "Ref": "InternetGateway"
@@ -123,7 +164,7 @@
             "Ref": "TemplateURLPrefix"
           },
           "Vpc": {
-            "Ref": "VPC"
+            "Ref": "Vpc"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
@@ -166,7 +207,7 @@
             ]
           },
           "Vpc": {
-            "Ref": "VPC"
+            "Ref": "Vpc"
           },
           "InternetGateway": {
             "Ref": "InternetGateway"
@@ -203,7 +244,23 @@
   "Outputs": {
     "Vpc": {
       "Value": {
-        "Ref": "VPC"
+        "Ref": "Vpc"
+      }
+    },
+    "InternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroups",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "NTPSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SecurityGroups",
+          "Outputs.NTPSecurityGroup"
+        ]
       }
     },
     "PrivateSubnets": {

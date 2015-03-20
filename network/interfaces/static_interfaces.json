@@ -10,11 +10,11 @@
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
     },
-    "PrivateSubnets": {
+    "InfrastructureVPCPrivateSubnets": {
       "Description": "Subnets to associate public routing.",
       "Type": "String"
     },
-    "CidrBlockPrefix": {
+    "InfrastructureVPCCidrBlockPrefix": {
       "Description": "CidrBlock for this VPC",
       "Type": "String",
       "MinLength": "3",
@@ -26,42 +26,26 @@
       "Description": "URL prefix for this stack.",
       "Type": "String"
     },
-    "BastionSecurityGroup": {
+    "InfrastructureVPCBastionSecurityGroup": {
       "Description": "Security group to allow ssh from bastion instances.",
       "Type": "String"
     },
-    "NTPSecurityGroup": {
+    "InfrastructureVPCNTPSecurityGroup": {
       "Type": "String"
-    },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "VpcName": {
-      "Description": "Name of the VPC to create services in.",
-      "Type": "String",
-      "AllowedValues": [
-        "infrastructure",
-        "application"
-      ]
     }
   },
-  "Conditions": {
-    "CreateInfrastructureNetworkInterfaces": {
-      "Fn::Equals": [
-        {
-          "Ref": "VpcName"
-        },
-        "infrastructure"
-      ]
+  "Outputs": {
+    "NTPIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NTPNetworkInterfaces",
+          "Outputs.IpAddresses"
+        ]
+      }
     }
   },
   "Resources": {
     "NTPNetworkInterfaces": {
-      "Condition": "CreateInfrastructureNetworkInterfaces",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -69,22 +53,22 @@
             "Ref": "Environment"
           },
           "Subnets": {
-            "Ref": "PrivateSubnets"
+            "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "Role": "ntp",
           "IpLastDigit": "5",
           "CidrBlockPrefix": {
-            "Ref": "CidrBlockPrefix"
+            "Ref": "InfrastructureVPCCidrBlockPrefix"
           },
           "SecurityGroups": {
             "Fn::Join": [
               ",",
               [
                 {
-                  "Ref": "NTPSecurityGroup"
+                  "Ref": "InfrastructureVPCNTPSecurityGroup"
                 },
                 {
-                  "Ref": "BastionSecurityGroup"
+                  "Ref": "InfrastructureVPCBastionSecurityGroup"
                 }
               ]
             ]
@@ -98,42 +82,6 @@
                 "Ref": "TemplateURLPrefix"
               },
               "network/interfaces/static_eni_pair.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "10"
-      }
-    },
-    "NTPRecordSets": {
-      "Condition": "CreateInfrastructureNetworkInterfaces",
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Role": "ntp",
-          "HostedZoneId": {
-            "Ref": "PrivateInternalHostedZone"
-          },
-          "HostedZoneName": {
-            "Ref": "PrivateInternalDomain"
-          },
-          "IpAddresses": {
-            "Fn::GetAtt": [
-              "NTPNetworkInterfaces",
-              "Outputs.IpAddresses"
-            ]
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "network/dns/dns_record_sets.json"
             ]
           ]
         },

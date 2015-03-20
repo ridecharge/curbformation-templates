@@ -27,6 +27,13 @@
     },
     "InfrastructureVPC": {
       "Type": "String"
+    },
+    "NTPIpAddresses": {
+      "Type": "String"
+    },
+    "TemplateURLPrefix": {
+      "Description": "URL prefix for this stack.",
+      "Type": "String"
     }
   },
   "Mappings": {
@@ -204,6 +211,44 @@
             }
           ]
         }
+      }
+    },
+    "NTPRecordSets": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": "ntp",
+          "HostedZoneId": {
+            "Fn::FindInMap": [
+              "PrivateZones",
+              {
+                "Ref": "Environment"
+              },
+              "ZoneId"
+            ]
+          },
+          "HostedZoneName": {
+            "Ref": "PrivateInternalDomainBase"
+          },
+          "IpAddresses": {
+            "Ref": "NTPIpAddresses"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/dns/dns_record_sets.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
       }
     }
   }

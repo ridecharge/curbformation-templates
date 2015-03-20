@@ -34,14 +34,6 @@
         ]
       }
     },
-    "NATSecurityGroup": {
-      "Value": {
-        "Fn::GetAtt": [
-          "NATSecurity",
-          "Outputs.SecurityGroup"
-        ]
-      }
-    },
     "InternalBastionSecurityGroup": {
       "Value": {
         "Fn::GetAtt": [
@@ -49,45 +41,9 @@
           "Outputs.InternalSecurityGroup"
         ]
       }
-    },
-    "ExternalBastionSecurityGroup": {
-      "Value": {
-        "Fn::GetAtt": [
-          "BastionSecurity",
-          "Outputs.ExternalSecurityGroup"
-        ]
-      }
     }
   },
   "Resources": {
-    "NATSecurity": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Vpc": {
-            "Ref": "Vpc"
-          },
-          "CidrBlock": {
-            "Ref": "CidrBlock"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "network/security_groups/nat_security.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
     "NTPSecurity": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {

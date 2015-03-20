@@ -1,0 +1,88 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "v1.0 Creates a Consul service",
+  "Parameters": {
+    "Environment": {
+      "Description": "Name of the environment to launch services into.",
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "8",
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Type": "String"
+    },
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
+    "PublicInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicInternalDomain": {
+      "Type": "String"
+    },
+    "InfrastructureVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "InfrastructureVPC": {
+      "Description": "VPC to launch this subnet into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
+    },
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "BaseImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id"
+    }
+  },
+  "Outputs": {
+    "ApplicationName": {
+      "Value": {
+        "Ref": "ApplicationName"
+      }
+    },
+    "Version": {
+      "Value": "latest"
+    },
+    "PublicEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "PublicDNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
+    },
+    "PrivateEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "PrivateDNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
+    }
+  },
+  "Resources": {
+  }
+}

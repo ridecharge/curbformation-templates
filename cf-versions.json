@@ -118,7 +118,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_security.json"
+              "services/web/web_security.json"
             ]
           ]
         },
@@ -140,7 +140,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/profiles/versions_profile.json"
+              "services/profiles/versions_profile.json"
             ]
           ]
         },
@@ -186,7 +186,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -232,7 +232,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -337,7 +337,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_autoscaling.json"
+              "services/web/web_autoscaling.json"
             ]
           ]
         },

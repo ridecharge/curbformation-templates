@@ -79,28 +79,6 @@
         "TimeoutInMinutes": "30"
       }
     },
-    "NATInstanceProfile": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "network/instance_profiles/nat_profile.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "30"
-      }
-    },
     "ENIAttachInstanceProfile": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
