@@ -50,7 +50,7 @@
     }
   },
   "Conditions": {
-    "CreateNetworkInterfaces": {
+    "CreateInfrastructureNetworkInterfaces": {
       "Fn::Equals": [
         {
           "Ref": "VpcName"
@@ -61,7 +61,7 @@
   },
   "Resources": {
     "NTPNetworkInterfaces": {
-      "Condition": "CreateNetworkInterfaces",
+      "Condition": "CreateInfrastructureNetworkInterfaces",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
@@ -105,7 +105,7 @@
       }
     },
     "NTPRecordSets": {
-      "Condition": "CreateNetworkInterfaces",
+      "Condition": "CreateInfrastructureNetworkInterfaces",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {

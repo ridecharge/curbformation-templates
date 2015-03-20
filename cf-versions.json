@@ -317,7 +317,7 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                " --link consul:consul sgarlick987/",
+                " --link consul:consul ridechage/",
                 {
                   "Ref": "ApplicationName"
                 },
@@ -325,7 +325,7 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                ":app --link consul:consul -p 8080:8080 sgarlick987/nginx\n"
+                ":app --link consul:consul -p 8080:8080 ridecharge/nginx\n"
               ]
             ]
           }
