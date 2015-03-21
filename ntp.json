@@ -27,20 +27,17 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPC": {
-      "Description": "VPC to launch this subnet into.",
-      "Type": "AWS::EC2::VPC::Id"
-    },
-    "TemplateURLPrefix": {
-      "Type": "String"
-    },
     "InfrastructureInternalBastionSecurityGroup": {
       "Type": "String"
     },
-    "BaseImageId": {
+    "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
+      "Default": "ami-2238174a",
       "ConstraintDescription": "Must be a valid ami id"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -54,68 +51,12 @@
     }
   },
   "Resources": {
-    
-    "NTPInstances": {
+    "InstanceProfile": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": "NATInstances",
-      "Condition": "CreateInfraInstances",
       "Properties": {
         "Parameters": {
-          "UserData": {
-            "Fn::Join": [
-              "",
-              [
-                "docker run -d --restart=on-failure:10 -e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
-                "sgarlick987/aws-startup-utils ./attach_eni.py\n",
-                "/root/config_network_interface.sh eth1"
-              ]
-            ]
-          },
           "Environment": {
             "Ref": "Environment"
-          },
-          "Role": "ntp",
-          "NewRelicToken": {
-            "Ref": "NewRelicToken"
-          },
-          "LogglyToken": {
-            "Ref": "LogglyToken"
-          },
-          "Subnets": {
-            "Ref": "PrivateSubnets"
-          },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
-          "SecurityGroup": {
-            "Ref": "NTPSecurityGroup"
-          },
-          "Vpc": {
-            "Ref": "Vpc"
-          },
-          "InstanceProfile": {
-            "Ref": "ENIAttachInstanceProfile"
-          },
-          "VpcName": {
-            "Ref": "VpcName"
-          },
-          "BastionSecurityGroup": {
-            "Ref": "InternalBastionSecurityGroup"
-          },
-          "AvailabilityZones": {
-            "Ref": "AvailabilityZones"
-          },
-          "ImageId": {
-            "Ref": "NTPImageId"
-          },
-          "PublicInternalHostedZone": {
-            "Ref": "PublicInternalHostedZone"
-          },
-          "PublicInternalDomain": {
-            "Ref": "PublicInternalDomain"
-          },
-          "PublicExternalDomain": {
-            "Ref": "PublicExternalDomain"
           }
         },
         "TemplateURL": {
@@ -125,7 +66,67 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/cluster.json"
+              "services/profiles/eni_attach_profile.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "30"
+      }
+    },
+    "Instances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "UserData": {
+            "Fn::Join": [
+              " ",
+              [
+                "docker run -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                "ridecharge/aws-startup-utils ./attach_eni.py &&",
+                "/root/config_network_interface.sh eth1"
+              ]
+            ]
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "Subnets": {
+            "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "SecurityGroups": {
+            "Ref": "InfrastructureInternalBastionSecurityGroup"
+          },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
+          "VpcName": "infrastructure",
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "ImageId"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/infra/infra_autoscaling.json"
             ]
           ]
         },

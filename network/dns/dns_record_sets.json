@@ -13,7 +13,9 @@
     "Role": {
       "Type": "String",
       "AllowedValues": [
-        "ntp"
+        "ntp",
+        "bastion-infra",
+        "bastion-app"
       ]
     },
     "HostedZoneName": {

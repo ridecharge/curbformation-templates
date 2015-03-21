@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a Consul service",
+  "Description": "v1.0 Creates Bastion services.",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -23,18 +23,21 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "InfrastructureVPCPublicSubnets": {
+    "InfrastructureVPCPrivateSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPC": {
-      "Description": "VPC to launch this subnet into.",
-      "Type": "AWS::EC2::VPC::Id"
-    },
-    "TemplateURLPrefix": {
+    "InfrastructureInternalBastionSecurityGroup": {
       "Type": "String"
     },
-    "InfrastructureInternalBastionSecurityGroup": {
+    "ApplicationVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "ApplicationInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "TemplateURLPrefix": {
       "Type": "String"
     },
     "BaseImageId": {
@@ -54,59 +57,12 @@
     }
   },
   "Resources": {
-    "Instances": {
+    "InstanceProfile": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
-          },
-          "Role": "bastion",
-          "Subnets": {
-            "Ref": "PublicSubnets"
-          },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
-          "Vpc": {
-            "Ref": "Vpc"
-          },
-          "InstanceProfile": {
-            "Ref": "PublicInternalHostedZoneInstanceProfile"
-          },
-          "NewRelicToken": {
-            "Ref": "NewRelicToken"
-          },
-          "VpcName": {
-            "Ref": "VpcName"
-          },
-          "SecurityGroups": {
-            "Ref": "InternalBastionSecurityGroup"
-          },
-          "AvailabilityZones": {
-            "Ref": "AvailabilityZones"
-          },
-          "BaseImageId": {
-            "Ref": "BastionImageId"
-          },
-          "LogglyToken": {
-            "Ref": "LogglyToken"
-          },
-          "PublicInternalDomain": {
-            "Fn::Join": [
-              ".",
-              [
-                {
-                  "Ref": "VpcName"
-                },
-                {
-                  "Ref": "PublicInternalDomain"
-                }
-              ]
-            ]
-          },
-          "PublicExternalDomain": {
-            "Ref": "PublicExternalDomain"
           }
         },
         "TemplateURL": {
@@ -116,7 +72,127 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "network/instances/cluster.json"
+              "services/profiles/eni_attach_profile.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "30"
+      }
+    },
+    "InfrastructureInstances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "UserData": {
+            "Fn::Join": [
+              " ",
+              [
+                "docker run -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                "ridecharge/aws-startup-utils ./attach_eni.py &&",
+                "/root/config_network_interface.sh eth1"
+              ]
+            ]
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "Subnets": {
+            "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "VpcName": "infrastructure",
+          "SecurityGroups": {
+            "Ref": "InfrastructureInternalBastionSecurityGroup"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "BaseImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/infra/infra_autoscaling.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "30"
+      }
+    },
+    "ApplicationInstances": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "UserData": {
+            "Fn::Join": [
+              " ",
+              [
+                "docker run -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
+                "ridecharge/aws-startup-utils ./attach_eni.py &&",
+                "/root/config_network_interface.sh eth1"
+              ]
+            ]
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "Subnets": {
+            "Ref": "ApplicationVPCPrivateSubnets"
+          },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "VpcName": "application",
+          "SecurityGroups": {
+            "Ref": "ApplicationInternalBastionSecurityGroup"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "ImageId": {
+            "Ref": "BaseImageId"
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/infra/infra_autoscaling.json"
             ]
           ]
         },

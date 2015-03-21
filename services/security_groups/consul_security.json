@@ -65,7 +65,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_security.json"
+              "services/web/web_security.json"
             ]
           ]
         },

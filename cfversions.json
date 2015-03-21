@@ -140,7 +140,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "services/profiles/versions_profile.json"
+              "services/profiles/cfversions_profile.json"
             ]
           ]
         },

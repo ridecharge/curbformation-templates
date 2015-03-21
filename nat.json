@@ -66,7 +66,7 @@
     "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
-      "Default": "ami-62547b0a",
+      "Default": "ami-e438178c",
       "ConstraintDescription": "Must be a valid ami id"
     }
   },
@@ -113,7 +113,7 @@
               [
                 "service iptables-persistent start\n",
                 "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
-                " sgarlick987/aws-startup-utils ./nat_monitor.py"
+                " ridecharge/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },
@@ -150,7 +150,10 @@
             "Ref": "LogglyToken"
           },
           "InstanceProfile": {
-            "Ref": "InstanceProfile"
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
@@ -183,7 +186,7 @@
               [
                 "service iptables-persistent start\n",
                 "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
-                " sgarlick987/aws-startup-utils ./nat_monitor.py"
+                " ridecharge/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },
@@ -220,7 +223,10 @@
             "Ref": "LogglyToken"
           },
           "InstanceProfile": {
-            "Ref": "InstanceProfile"
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
