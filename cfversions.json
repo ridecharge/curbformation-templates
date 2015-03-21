@@ -307,7 +307,7 @@
           "InstancePort": "8080",
           "InstanceHealthCheck": "/health",
           "LoadBalancerPort": "443",
-          "HealthCheckGracePeriod": "30",
+          "HealthCheckGracePeriod": "150",
           "Cooldown": "30",
           "UserData": {
             "Fn::Join": [
@@ -317,15 +317,21 @@
                 {
                   "Ref": "ApplicationName"
                 },
-                " --link consul:consul ridechage/",
+                " --link consul:consul ridecharge/",
                 {
                   "Ref": "ApplicationName"
                 },
-                "\ndocker run -d --name nginx --link ",
+                "\ndocker run -d --name nginx ",
+                "-e SERVICE_NAME=",
                 {
                   "Ref": "ApplicationName"
                 },
-                ":app --link consul:consul -p 8080:8080 ridecharge/nginx\n"
+                " --link ",
+                {
+                  "Ref": "ApplicationName"
+                },
+                ":app --link consul:consul --link logging:logging ",
+                "-p 8080:8080 ridecharge/nginx\n"
               ]
             ]
           }

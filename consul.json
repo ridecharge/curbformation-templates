@@ -300,7 +300,7 @@
           "DeployMinInstancesInService": "5",
           "InstancePort": "8500",
           "InstanceHealthCheck": "/v1/agent/self",
-          "HealthCheckGracePeriod": "60",
+          "HealthCheckGracePeriod": "120",
           "Cooldown": "30",
           "UpdatePauseTime": "PT3M1S"
         },
