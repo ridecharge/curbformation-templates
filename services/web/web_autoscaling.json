@@ -226,7 +226,29 @@
                 "HTTP"
               ]
             },
-            "SSLCertificateId": "test"
+            "SSLCertificateId": {
+              "Fn::If": [
+                "UseSSL",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":server-certificate/",
+                      {
+                        "Ref": "Environment"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Ref": "AWS::NoValue"
+                }
+              ]
+            }
           }
         ],
         "LoadBalancerName": {
