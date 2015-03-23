@@ -104,6 +104,91 @@
         "TimeoutInMinutes": "5"
       }
     },
+    "NetworkInterfaces": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
+          "InfrastructureVPCPrivateSubnets": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.PrivateSubnets"
+            ]
+          },
+          "InfrastructureVPCPublicSubnets": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.PublicSubnets"
+            ]
+          },
+          "InfrastructureVPCCidrBlockPrefix": {
+            "Ref":"InfrastructureVPCCidrBlockPrefix"
+          },
+          "InfrastructureVPCInternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.InternalBastionSecurityGroup"
+            ]
+          },
+          "InfrastructureVPCExternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.ExternalBastionSecurityGroup"
+            ]
+          },
+          "ApplicationVPCPrivateSubnets": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.PrivateSubnets"
+            ]
+          },
+          "ApplicationVPCPublicSubnets": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.PublicSubnets"
+            ]
+          },
+          "ApplicationVPCCidrBlockPrefix": {
+            "Ref":"ApplicationVPCCidrBlockPrefix"
+          },
+          "ApplicationVPCInternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.InternalBastionSecurityGroup"
+            ]
+          },
+          "ApplicationVPCExternalBastionSecurityGroup": {
+            "Fn::GetAtt": [
+              "ApplicationVPC",
+              "Outputs.ExternalBastionSecurityGroup"
+            ]
+          },
+          "NTPSecurityGroup": {
+            "Fn::GetAtt": [
+              "InfrastructureVPC",
+              "Outputs.NTPSecurityGroup"
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "network/interfaces/static_interfaces.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
     "VpcPeering": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
@@ -252,6 +337,62 @@
         "Fn::GetAtt": [
           "ApplicationVPC",
           "Outputs.DBSubnetGroup"
+        ]
+      }
+    },
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "InfrastructureVPC",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "ApplicationInternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ApplicationVPC",
+          "Outputs.InternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "InfrastructureVPCCidrBlock": {
+      "Value": {
+        "Fn::GetAtt": [
+          "InfrastructureVPC",
+          "Outputs.CidrBlock"
+        ]
+      }
+    },
+    "ApplicationVPCCidrBlock": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ApplicationVPC",
+          "Outputs.CidrBlock"
+        ]
+      }
+    },
+    "NTPIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NetworkInterfaces",
+          "Outputs.NTPIpAddresses"
+        ]
+      }
+    },
+    "InfrastructureBastionIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NetworkInterfaces",
+          "Outputs.InfrastructureBastionIpAddresses"
+        ]
+      }
+    },
+    "ApplicationBastionIpAddresses": {
+      "Value": {
+        "Fn::GetAtt": [
+          "NetworkInterfaces",
+          "Outputs.ApplicationBastionIpAddresses"
         ]
       }
     }

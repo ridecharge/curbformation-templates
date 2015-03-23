@@ -35,7 +35,7 @@
             "IpProtocol": "udp",
             "FromPort": "123",
             "ToPort": "123",
-            "CidrIp": "0.0.0.0/0"
+            "CidrIp": "10.0.0.0/8"
           }
         ]
       }

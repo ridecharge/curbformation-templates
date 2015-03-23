@@ -20,18 +20,6 @@
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
-    "PublicInternalHostedZone": {
-      "Description": "Route53 Public Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicInternalDomain": {
-      "Description": "Route53 Public Internal Domain for VPC.",
-      "Type": "String"
-    },
-    "PublicExternalDomain": {
-      "Description": "Route53 Public External Domain for VPC.",
-      "Type": "String"
-    },
     "SecurityGroups": {
       "Description": "Security Groups for the instances",
       "Type": "CommaDelimitedList"
@@ -303,20 +291,6 @@
             "Key": "Role",
             "Value": {
               "Ref": "Role"
-            },
-            "PropagateAtLaunch": "true"
-          },
-          {
-            "Key": "PublicInternalHostedZone",
-            "Value": {
-              "Ref": "PublicInternalHostedZone"
-            },
-            "PropagateAtLaunch": "true"
-          },
-          {
-            "Key": "PublicInternalDomain",
-            "Value": {
-              "Ref": "PublicInternalDomain"
             },
             "PropagateAtLaunch": "true"
           }

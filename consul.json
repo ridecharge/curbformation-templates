@@ -41,6 +41,10 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
+    "InfrastructureVPCPublicSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
     "InfrastructureVPC": {
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
@@ -111,7 +115,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/security_groups/consul_security.json"
+              "services/security_groups/consul_security.json"
             ]
           ]
         },
@@ -136,7 +140,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_profile.json"
+              "services/web/web_profile.json"
             ]
           ]
         },
@@ -180,7 +184,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -224,7 +228,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_record_set.json"
+              "services/web/web_record_set.json"
             ]
           ]
         },
@@ -275,13 +279,16 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
-          "Subnets": {
+          "InstanceSubnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "LoadBalancerSubnets": {
+            "Ref": "InfrastructureVPCPublicSubnets"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "Scheme": "internal",
+          "Scheme": "internet-facing",
           "InstanceType": "m3.medium",
           "ImageId": {
             "Ref": "BaseImageId"
@@ -293,7 +300,7 @@
           "DeployMinInstancesInService": "5",
           "InstancePort": "8500",
           "InstanceHealthCheck": "/v1/agent/self",
-          "HealthCheckGracePeriod": "60",
+          "HealthCheckGracePeriod": "300",
           "Cooldown": "30",
           "UpdatePauseTime": "PT3M1S"
         },
@@ -304,7 +311,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/web_autoscaling.json"
+              "services/web/web_autoscaling.json"
             ]
           ]
         },
