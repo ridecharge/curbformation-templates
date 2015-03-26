@@ -213,6 +213,28 @@
         }
       }
     },
+    "AutoscalingSnsTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": {
+          "Fn::Join": [
+            "-",
+            [
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "VpcName"
+              },
+              {
+                "Ref": "Role"
+              },
+              "-autoscaling-notifications"
+            ]
+          ]
+        }
+      }
+    },
     "AutoScalingGroup": {
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
@@ -238,6 +260,9 @@
               }
             ]
           }
+        ],
+        "TerminationPolicies": [
+          "NewestInstance"
         ],
         "Cooldown": "30",
         "DesiredCapacity": "2",

@@ -182,8 +182,21 @@
         "Scheme": {
           "Ref": "Scheme"
         },
+        "ConnectionDraining": {
+          "Enabled": true,
+          "Timeout": 300
+        },
+        "CrossZone": true,
         "Subnets": {
           "Ref": "LoadBalancerSubnets"
+        },
+        "NotificationConfiguration": {
+          "NotificationTypes": [
+            ""
+          ],
+          "TopicARN": {
+            "Ref": "AutoscalingSnsTopic"
+          }
         },
         "HealthCheck": {
           "HealthyThreshold": "5",
@@ -282,6 +295,25 @@
             }
           }
         ]
+      }
+    },
+    "AutoscalingSnsTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": {
+          "Fn::Join": [
+            "-",
+            [
+              {
+                "Ref": "Environment"
+              },
+              {
+                "Ref": "ApplicationName"
+              },
+              "-autoscaling-notifications"
+            ]
+          ]
+        }
       }
     },
     "AsgLaunchConfiguration": {
