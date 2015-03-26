@@ -289,7 +289,7 @@
             "Ref": "NewRelicToken"
           },
           "Scheme": "internet-facing",
-          "InstanceType": "m3.medium",
+          "InstanceType": "c4.large",
           "ImageId": {
             "Ref": "BaseImageId"
           },

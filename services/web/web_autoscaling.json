@@ -182,21 +182,13 @@
         "Scheme": {
           "Ref": "Scheme"
         },
-        "ConnectionDraining": {
+        "ConnectionDrainingPolicy": {
           "Enabled": true,
-          "Timeout": 300
+          "Timeout": 60
         },
         "CrossZone": true,
         "Subnets": {
           "Ref": "LoadBalancerSubnets"
-        },
-        "NotificationConfiguration": {
-          "NotificationTypes": [
-            ""
-          ],
-          "TopicARN": {
-            "Ref": "AutoscalingSnsTopic"
-          }
         },
         "HealthCheck": {
           "HealthyThreshold": "5",
@@ -297,7 +289,7 @@
         ]
       }
     },
-    "AutoscalingSnsTopic": {
+    "AsgSnsTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "TopicName": {
@@ -310,7 +302,7 @@
               {
                 "Ref": "ApplicationName"
               },
-              "-autoscaling-notifications"
+              "autoscaling-notifications"
             ]
           ]
         }
@@ -381,6 +373,18 @@
       "Properties": {
         "AvailabilityZones": {
           "Ref": "AvailabilityZones"
+        },
+        "NotificationConfiguration": {
+          "NotificationTypes": [
+            "autoscaling:EC2_INSTANCE_LAUNCH",
+            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+            "autoscaling:EC2_INSTANCE_TERMINATE",
+            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+            "autoscaling:TEST_NOTIFICATION"
+          ],
+          "TopicARN": {
+            "Ref": "AsgSnsTopic"
+          }
         },
         "LoadBalancerNames": [
           {

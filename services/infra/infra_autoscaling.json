@@ -213,7 +213,7 @@
         }
       }
     },
-    "AutoscalingSnsTopic": {
+    "AsgSnsTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "TopicName": {
@@ -229,7 +229,7 @@
               {
                 "Ref": "Role"
               },
-              "-autoscaling-notifications"
+              "autoscaling-notifications"
             ]
           ]
         }
@@ -247,6 +247,18 @@
       "Properties": {
         "AvailabilityZones": {
           "Ref": "AvailabilityZones"
+        },
+        "NotificationConfiguration": {
+          "NotificationTypes": [
+            "autoscaling:EC2_INSTANCE_LAUNCH",
+            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+            "autoscaling:EC2_INSTANCE_TERMINATE",
+            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+            "autoscaling:TEST_NOTIFICATION"
+          ],
+          "TopicARN": {
+            "Ref": "AsgSnsTopic"
+          }
         },
         "LoadBalancerNames": [
           {
