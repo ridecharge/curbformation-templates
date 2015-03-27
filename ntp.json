@@ -33,7 +33,7 @@
     "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
-      "Default": "ami-cef5dfa6",
+      "Default": "ami-2aa38942",
       "ConstraintDescription": "Must be a valid ami id"
     },
     "TemplateURLPrefix": {

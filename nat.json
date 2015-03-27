@@ -66,7 +66,7 @@
     "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
-      "Default": "ami-42f5df2a",
+      "Default": "ami-56a3893e",
       "ConstraintDescription": "Must be a valid ami id"
     }
   },
