@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a Consul service",
+  "Description": "v1.0 Creates a Driver Portal service",
   "Parameters": {
     "Environment": {
       "Description": "Name of the environment to launch services into.",
@@ -30,35 +30,47 @@
     "PrivateInternalDomain": {
       "Type": "String"
     },
-    "PublicInternalHostedZone": {
+    "PublicExternalHostedZone": {
       "Description": "Route53 Private Internal Hosted Zone for VPC.",
       "Type": "String"
     },
-    "PublicInternalDomain": {
+    "PublicExternalDomain": {
       "Type": "String"
     },
-    "InfrastructureVPCPrivateSubnets": {
+    "ApplicationVPCPublicSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPCPublicSubnets": {
+    "ApplicationVPCPrivateSubnets": {
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPC": {
+    "ApplicationVPC": {
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
     },
     "TemplateURLPrefix": {
       "Type": "String"
     },
-    "InfrastructureInternalBastionSecurityGroup": {
+    "ApplicationInternalBastionSecurityGroup": {
       "Type": "String"
     },
     "BaseImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id"
+    },
+    "LoadBalancerScheme": {
+      "Type": "String",
+      "Default": "internet-facing"
+    },
+    "LoadBalancerPort": {
+      "Type": "Number",
+      "Default": "443"
+    },
+    "Version": {
+      "Type": "String",
+      "Default": "0.0.7"
     }
   },
   "Outputs": {
@@ -68,7 +80,9 @@
       }
     },
     "Version": {
-      "Value": "latest"
+      "Value": {
+        "Ref": "Version"
+      }
     },
     "PublicEndPoint": {
       "Value": {
@@ -96,16 +110,39 @@
             "Ref": "Environment"
           },
           "Vpc": {
-            "Ref": "InfrastructureVPC"
+            "Ref": "ApplicationVPC"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "LoadBalancerPort": "443"
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      }
+    },
+    "StorageBuckets": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
           },
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
-          },
-          "BastionSecurityGroup": {
-            "Ref": "InfrastructureInternalBastionSecurityGroup"
           }
         },
         "TemplateURL": {
@@ -115,7 +152,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "services/security_groups/consul_security.json"
+              "services/web/s3/buckets.json"
             ]
           ]
         },
@@ -163,7 +200,9 @@
           "HostedZoneName": {
             "Ref": "PrivateInternalDomain"
           },
-          "LoadBalancerScheme": "internal",
+          "LoadBalancerScheme": {
+            "Ref": "LoadBalancerScheme"
+          },
           "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
@@ -202,12 +241,14 @@
             "Ref": "ApplicationName"
           },
           "HostedZoneId": {
-            "Ref": "PublicInternalHostedZone"
+            "Ref": "PublicExternalHostedZone"
           },
           "HostedZoneName": {
-            "Ref": "PublicInternalDomain"
+            "Ref": "PublicExternalDomain"
           },
-          "LoadBalancerScheme": "internal",
+          "LoadBalancerScheme": {
+            "Ref": "LoadBalancerScheme"
+          },
           "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
@@ -245,9 +286,6 @@
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
           "InstanceSecurityGroups": {
             "Fn::Join": [
               ",",
@@ -259,7 +297,7 @@
                   ]
                 },
                 {
-                  "Ref": "InfrastructureInternalBastionSecurityGroup"
+                  "Ref": "ApplicationInternalBastionSecurityGroup"
                 }
               ]
             ]
@@ -282,30 +320,65 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
-          "InstanceSubnets": {
-            "Ref": "InfrastructureVPCPrivateSubnets"
-          },
           "LoadBalancerSubnets": {
-            "Ref": "InfrastructureVPCPublicSubnets"
+            "Ref": "ApplicationVPCPublicSubnets"
+          },
+          "InstanceSubnets": {
+            "Ref": "ApplicationVPCPrivateSubnets"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "Scheme": "internet-facing",
-          "InstanceType": "c4.large",
+          "Scheme": {
+            "Ref": "LoadBalancerScheme"
+          },
+          "InstanceType": "m3.medium",
           "ImageId": {
             "Ref": "BaseImageId"
           },
-          "MinSize": "6",
-          "MaxSize": "6",
-          "DesiredCapacity": "6",
+          "MinSize": "2",
+          "MaxSize": "2",
+          "DesiredCapacity": "2",
           "DeployMaxBatchSize": "1",
-          "DeployMinInstancesInService": "5",
-          "InstancePort": "8500",
-          "InstanceHealthCheck": "/v1/agent/self",
+          "DeployMinInstancesInService": "1",
+          "InstancePort": "8080",
+          "InstanceHealthCheck": "/heartbeat",
+          "LoadBalancerPort": "443",
           "HealthCheckGracePeriod": "300",
           "Cooldown": "30",
-          "UpdatePauseTime": "PT3M1S"
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "docker run -d --name ",
+                {
+                  "Ref": "ApplicationName"
+                },
+                " --link consul:consul ridecharge/",
+                {
+                  "Ref": "ApplicationName"
+                },
+                ":",
+                {
+                  "Ref": "Version"
+                },
+                "\ndocker run -d --name nginx ",
+                "-e SERVICE_NAME=",
+                {
+                  "Ref": "ApplicationName"
+                },
+                " --link ",
+                {
+                  "Ref": "ApplicationName"
+                },
+                ":app --link consul:consul --link logging:logging ",
+                "-p 8080:8080 ridecharge/nginx\n"
+              ]
+            ]
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          }
         },
         "TemplateURL": {
           "Fn::Join": [

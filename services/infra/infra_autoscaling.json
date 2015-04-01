@@ -24,6 +24,10 @@
       "Description": "Security Groups for the instances",
       "Type": "CommaDelimitedList"
     },
+    "TerminationPolicy": {
+      "Type": "String",
+      "Default": "NewestInstance"
+    },
     "InstanceProfile": {
       "Description": "IAM Instance Profile for instances",
       "Type": "String"
@@ -64,6 +68,9 @@
         "bastion",
         "ntp"
       ]
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
     }
   },
   "Mappings": {
@@ -98,7 +105,58 @@
       ]
     }
   },
+  "Outputs": {
+    "AutoScalingGroupName": {
+      "Value": {
+        "Ref": "AutoScalingGroup"
+      }
+    }
+  },
   "Resources": {
+    "AutoScalingAlarms": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": {
+            "Ref": "Role"
+          },
+          "AutoScalingGroupName": {
+            "Ref": "AutoScalingGroup"
+          },
+          "AlarmName": {
+            "Fn::Join": [
+              "-",
+              [
+                {
+                  "Ref": "Environment"
+                },
+                {
+                  "Ref": "VpcName"
+                },
+                {
+                  "Ref": "Role"
+                }
+              ]
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/alarms/autoscaling_alarms.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    },
     "LoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Condition": "CreateLoadBalancer",
@@ -274,7 +332,9 @@
           }
         ],
         "TerminationPolicies": [
-          "NewestInstance"
+          {
+            "Ref": "TerminationPolicy"
+          }
         ],
         "Cooldown": "30",
         "DesiredCapacity": "2",

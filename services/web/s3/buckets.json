@@ -97,7 +97,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/s3/bucket.json"
+              "services/web/s3/bucket.json"
             ]
           ]
         },
@@ -126,7 +126,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "apps/web/s3/bucket.json"
+              "services/web/s3/bucket.json"
             ]
           ]
         },

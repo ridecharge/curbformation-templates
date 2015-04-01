@@ -123,6 +123,9 @@
     "HealthCheckGracePeriod": {
       "Type": "Number",
       "Default": "30"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -171,6 +174,47 @@
     }
   },
   "Resources": {
+    "AutoScalingAlarms": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "AutoScalingGroupName": {
+            "Ref": "AutoScalingGroup"
+          },
+          "AlarmName": {
+            "Fn::Join": [
+              "-",
+              [
+                {
+                  "Ref": "Environment"
+                },
+                {
+                  "Ref": "ApplicationName"
+                }
+              ]
+            ]
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/alarms/autoscaling_alarms.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "10"
+      }
+    },
     "LoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {

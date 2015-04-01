@@ -131,6 +131,9 @@
         "Parameters": {
           "Environment": {
             "Ref": "Environment"
+          },
+          "ApplicationName": {
+            "Ref": "ApplicationName"
           }
         },
         "TemplateURL": {
@@ -140,7 +143,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "services/profiles/cfversions_profile.json"
+              "services/web/web_profile.json"
             ]
           ]
         },
@@ -246,6 +249,9 @@
           "Environment": {
             "Ref": "Environment"
           },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
@@ -307,7 +313,7 @@
           "InstancePort": "8080",
           "InstanceHealthCheck": "/health",
           "LoadBalancerPort": "443",
-          "HealthCheckGracePeriod": "150",
+          "HealthCheckGracePeriod": "300",
           "Cooldown": "30",
           "UserData": {
             "Fn::Join": [

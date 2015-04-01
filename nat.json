@@ -160,6 +160,9 @@
           },
           "ImageId": {
             "Ref": "ImageId"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           }
         },
         "TemplateURL": {
@@ -193,6 +196,7 @@
           "Environment": {
             "Ref": "Environment"
           },
+          "TerminationPolicy": "OldestInstance",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
@@ -233,6 +237,9 @@
           },
           "ImageId": {
             "Ref": "ImageId"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           }
         },
         "TemplateURL": {

@@ -87,6 +87,9 @@
               ]
             ]
           },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
           "Environment": {
             "Ref": "Environment"
           },

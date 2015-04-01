@@ -123,6 +123,9 @@
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           }
         },
         "TemplateURL": {
@@ -183,6 +186,9 @@
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           }
         },
         "TemplateURL": {
