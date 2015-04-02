@@ -1,87 +1,18 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "v1.0 Creates a Driver Portal service",
-  "Parameters": {
-    "Environment": {
-      "Description": "Name of the environment to launch services into.",
-      "Type": "String",
-      "MinLength": "4",
-      "MaxLength": "8",
-      "AllowedPattern": "[a-z0-9]*",
-      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
-    },
-    "AvailabilityZones": {
-      "Description": "AvailabilityZones to launch networking stacks into.",
-      "Type": "String"
-    },
-    "ApplicationName": {
-      "Type": "String"
-    },
-    "LogglyToken": {
-      "Type": "String"
-    },
-    "NewRelicToken": {
-      "Type": "String"
-    },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "PublicExternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicExternalDomain": {
-      "Type": "String"
-    },
-    "ApplicationVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
-    "ApplicationVPCPrivateSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
-    "ApplicationVPC": {
-      "Description": "VPC to launch this subnet into.",
-      "Type": "AWS::EC2::VPC::Id"
-    },
-    "TemplateURLPrefix": {
-      "Type": "String"
-    },
-    "ApplicationInternalBastionSecurityGroup": {
-      "Type": "String"
-    },
-    "BaseImageId": {
-      "Type": "String",
-      "AllowedPattern": "ami-[a-z0-9]{8}",
-      "ConstraintDescription": "Must be a valid ami id"
-    },
-    "LoadBalancerScheme": {
-      "Type": "String",
-      "Default": "internet-facing"
-    },
-    "LoadBalancerPort": {
-      "Type": "Number",
-      "Default": "443"
-    },
-    "Version": {
-      "Type": "String",
-      "Default": "0.0.7"
-    }
-  },
   "Outputs": {
     "ApplicationName": {
       "Value": {
         "Ref": "ApplicationName"
       }
     },
-    "Version": {
+    "PrivateEndPoint": {
       "Value": {
-        "Ref": "Version"
+        "Fn::GetAtt": [
+          "PrivateDNSRecord",
+          "Outputs.EndPoint"
+        ]
       }
     },
     "PublicEndPoint": {
@@ -92,82 +23,93 @@
         ]
       }
     },
-    "PrivateEndPoint": {
+    "Version": {
       "Value": {
-        "Fn::GetAtt": [
-          "PrivateDNSRecord",
-          "Outputs.EndPoint"
-        ]
+        "Ref": "Version"
       }
     }
   },
+  "Parameters": {
+    "ApplicationInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "ApplicationVPC": {
+      "Description": "VPC to launch this subnet into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "ApplicationVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "ApplicationVPCPublicSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Type": "String"
+    },
+    "BaseImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Type": "String"
+    },
+    "Environment": {
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
+      "Description": "Name of the environment to launch services into.",
+      "MaxLength": "8",
+      "MinLength": "4",
+      "Type": "String"
+    },
+    "LoadBalancerPort": {
+      "Default": "443",
+      "Type": "Number"
+    },
+    "LoadBalancerScheme": {
+      "Default": "internet-facing",
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicExternalDomain": {
+      "Type": "String"
+    },
+    "PublicExternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
+    },
+    "Version": {
+      "Default": "latest",
+      "Type": "String"
+    }
+  },
   "Resources": {
-    "Security": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Vpc": {
-            "Ref": "ApplicationVPC"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "LoadBalancerPort": "443"
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_security.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "StorageBuckets": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/s3/buckets.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
     "InstanceProfile": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
           "ApplicationName": {
             "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
           }
         },
         "TemplateURL": {
@@ -182,109 +124,36 @@
           ]
         },
         "TimeoutInMinutes": "5"
-      }
-    },
-    "PrivateDNSRecord": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "HostedZoneId": {
-            "Ref": "PrivateInternalHostedZone"
-          },
-          "HostedZoneName": {
-            "Ref": "PrivateInternalDomain"
-          },
-          "LoadBalancerScheme": {
-            "Ref": "LoadBalancerScheme"
-          },
-          "LoadBalancerCanonicalHostedZoneNameID": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.CanonicalHostedZoneNameID"
-            ]
-          },
-          "LoadBalancerDNSHostedZoneName": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.DNSHostedZoneName"
-            ]
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_record_set.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "PublicDNSRecord": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "HostedZoneId": {
-            "Ref": "PublicExternalHostedZone"
-          },
-          "HostedZoneName": {
-            "Ref": "PublicExternalDomain"
-          },
-          "LoadBalancerScheme": {
-            "Ref": "LoadBalancerScheme"
-          },
-          "LoadBalancerCanonicalHostedZoneNameID": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.CanonicalHostedZoneNameID"
-            ]
-          },
-          "LoadBalancerDNSHostedZoneName": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.DNSHostedZoneName"
-            ]
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_record_set.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
     },
     "Instances": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "Cooldown": "30",
+          "DeployMaxBatchSize": "1",
+          "DeployMinInstancesInService": "1",
+          "DesiredCapacity": "2",
           "Environment": {
             "Ref": "Environment"
           },
-          "LogglyToken": {
-            "Ref": "LogglyToken"
+          "HealthCheckGracePeriod": "300",
+          "ImageId": {
+            "Ref": "BaseImageId"
+          },
+          "InstanceHealthCheck": "/heartbeat",
+          "InstancePort": "8080",
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
           },
           "InstanceSecurityGroups": {
             "Fn::Join": [
@@ -302,50 +171,34 @@
               ]
             ]
           },
-          "InstanceProfile": {
-            "Fn::GetAtt": [
-              "InstanceProfile",
-              "Outputs.InstanceProfile"
-            ]
+          "InstanceSubnets": {
+            "Ref": "ApplicationVPCPrivateSubnets"
           },
+          "InstanceType": "m3.medium",
+          "LoadBalancerPort": "443",
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [
               "Security",
               "Outputs.LoadBalancerSecurityGroup"
             ]
           },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "AvailabilityZones": {
-            "Ref": "AvailabilityZones"
-          },
           "LoadBalancerSubnets": {
             "Ref": "ApplicationVPCPublicSubnets"
           },
-          "InstanceSubnets": {
-            "Ref": "ApplicationVPCPrivateSubnets"
+          "LogglyToken": {
+            "Ref": "LogglyToken"
           },
+          "MaxSize": "2",
+          "MinSize": "2",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
           "Scheme": {
             "Ref": "LoadBalancerScheme"
           },
-          "InstanceType": "m3.medium",
-          "ImageId": {
-            "Ref": "BaseImageId"
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           },
-          "MinSize": "2",
-          "MaxSize": "2",
-          "DesiredCapacity": "2",
-          "DeployMaxBatchSize": "1",
-          "DeployMinInstancesInService": "1",
-          "InstancePort": "8080",
-          "InstanceHealthCheck": "/heartbeat",
-          "LoadBalancerPort": "443",
-          "HealthCheckGracePeriod": "300",
-          "Cooldown": "30",
           "UserData": {
             "Fn::Join": [
               "",
@@ -375,9 +228,6 @@
                 "-p 8080:8080 ridecharge/nginx\n"
               ]
             ]
-          },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
           }
         },
         "TemplateURL": {
@@ -392,7 +242,157 @@
           ]
         },
         "TimeoutInMinutes": "10"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "PrivateDNSRecord": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "HostedZoneId": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "LoadBalancerCanonicalHostedZoneNameID": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
+            ]
+          },
+          "LoadBalancerScheme": {
+            "Ref": "LoadBalancerScheme"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "PublicDNSRecord": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "HostedZoneId": {
+            "Ref": "PublicExternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PublicExternalDomain"
+          },
+          "LoadBalancerCanonicalHostedZoneNameID": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
+            ]
+          },
+          "LoadBalancerScheme": {
+            "Ref": "LoadBalancerScheme"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "Security": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "LoadBalancerPort": "443",
+          "Vpc": {
+            "Ref": "ApplicationVPC"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "StorageBuckets": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/s3/buckets.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
     }
   }
 }
