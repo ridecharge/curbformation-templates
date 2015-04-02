@@ -53,7 +53,9 @@
       }
     },
     "Version": {
-      "Value": "latest"
+      "Value": {
+        "Ref": "BaseImageId"
+      }
     }
   },
   "Resources": {
