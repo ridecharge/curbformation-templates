@@ -1,20 +1,45 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "v1.0 Creates a Consul service",
+  "Outputs": {
+    "ApplicationName": {
+      "Value": {
+        "Ref": "ApplicationName"
+      }
+    },
+    "Version": {
+      "Value": {
+        "Ref": "ImageId"
+      }
+    }
+  },
   "Parameters": {
-    "Environment": {
-      "Description": "Name of the environment to launch services into.",
-      "Type": "String",
-      "MinLength": "4",
-      "MaxLength": "8",
-      "AllowedPattern": "[a-z0-9]*",
-      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
+    "ApplicationName": {
+      "Type": "String"
     },
     "AvailabilityZones": {
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "String"
     },
-    "ApplicationName": {
+    "Environment": {
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
+      "Description": "Name of the environment to launch services into.",
+      "MaxLength": "8",
+      "MinLength": "4",
+      "Type": "String"
+    },
+    "ImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Default": "ami-706f5f18",
+      "Type": "String"
+    },
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "InfrastructureVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
       "Type": "String"
     },
     "LogglyToken": {
@@ -23,36 +48,12 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "InfrastructureVPCPrivateSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
-    "InfrastructureInternalBastionSecurityGroup": {
-      "Type": "String"
-    },
-    "ImageId": {
-      "Type": "String",
-      "AllowedPattern": "ami-[a-z0-9]{8}",
-      "Default": "ami-2aa38942",
-      "ConstraintDescription": "Must be a valid ami id"
-    },
     "TemplateURLPrefix": {
       "Type": "String"
     }
   },
-  "Outputs": {
-    "ApplicationName": {
-      "Value": {
-        "Ref": "ApplicationName"
-      }
-    },
-    "Version": {
-      "Value": "latest"
-    }
-  },
   "Resources": {
     "InstanceProfile": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
           "Environment": {
@@ -71,12 +72,45 @@
           ]
         },
         "TimeoutInMinutes": "30"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
     },
     "Instances": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "ImageId": {
+            "Ref": "ImageId"
+          },
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
+          },
+          "LogglyToken": {
+            "Ref": "LogglyToken"
+          },
+          "NewRelicToken": {
+            "Ref": "NewRelicToken"
+          },
+          "Role": {
+            "Ref": "ApplicationName"
+          },
+          "SecurityGroups": {
+            "Ref": "InfrastructureInternalBastionSecurityGroup"
+          },
+          "Subnets": {
+            "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          },
           "UserData": {
             "Fn::Join": [
               " ",
@@ -87,40 +121,7 @@
               ]
             ]
           },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          },
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Role": {
-            "Ref": "ApplicationName"
-          },
-          "NewRelicToken": {
-            "Ref": "NewRelicToken"
-          },
-          "LogglyToken": {
-            "Ref": "LogglyToken"
-          },
-          "Subnets": {
-            "Ref": "InfrastructureVPCPrivateSubnets"
-          },
-          "SecurityGroups": {
-            "Ref": "InfrastructureInternalBastionSecurityGroup"
-          },
-          "InstanceProfile": {
-            "Fn::GetAtt": [
-              "InstanceProfile",
-              "Outputs.InstanceProfile"
-            ]
-          },
-          "VpcName": "infrastructure",
-          "AvailabilityZones": {
-            "Ref": "AvailabilityZones"
-          },
-          "ImageId": {
-            "Ref": "ImageId"
-          }
+          "VpcName": "infrastructure"
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -134,7 +135,8 @@
           ]
         },
         "TimeoutInMinutes": "10"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
     }
   }
 }

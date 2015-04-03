@@ -97,7 +97,7 @@
       "Type": "String"
     },
     "Version": {
-      "Default": "latest",
+      "Default": "0.0.7",
       "Type": "String"
     }
   },

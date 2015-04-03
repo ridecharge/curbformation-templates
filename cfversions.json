@@ -67,6 +67,10 @@
     "LoadBalancerPort": {
       "Type": "Number",
       "Default": "443"
+    },
+    "Version": {
+      "Default": "latest",
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -76,7 +80,9 @@
       }
     },
     "Version": {
-      "Value": "latest"
+      "Value": {
+        "Ref": "Version"
+      }
     },
     "PublicEndPoint": {
       "Value": {
