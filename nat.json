@@ -66,6 +66,12 @@
     "ImageId": {
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
+      "Default": "ami-6e437306",
+      "ConstraintDescription": "Must be a valid ami id"
+    },
+    "PreviousImageId": {
+      "Type": "String",
+      "AllowedPattern": "ami-[a-z0-9]{8}",
       "Default": "ami-7e6f5f16",
       "ConstraintDescription": "Must be a valid ami id"
     }
@@ -109,16 +115,6 @@
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
-          "UserData": {
-            "Fn::Join": [
-              "",
-              [
-                "service iptables-persistent start\n",
-                "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
-                " ridecharge/aws-startup-utils ./nat_monitor.py"
-              ]
-            ]
-          },
           "Environment": {
             "Ref": "Environment"
           },
@@ -165,6 +161,17 @@
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
+          },
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "/root/startup.sh\n",
+                "docker run -d --restart=always ",
+                "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
+                "ridecharge/aws-startup-utils ./nat_monitor.py"
+              ]
+            ]
           }
         },
         "TemplateURL": {
@@ -189,9 +196,10 @@
             "Fn::Join": [
               "",
               [
-                "service iptables-persistent start\n",
-                "docker run -d --restart=always -e LOGGLY_TOKEN=$LOGGLY_TOKEN",
-                " ridecharge/aws-startup-utils ./nat_monitor.py"
+                "/root/startup.sh\n",
+                "docker run -d --restart=always ",
+                "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
+                "ridecharge/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },

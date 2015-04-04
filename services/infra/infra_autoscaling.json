@@ -261,7 +261,7 @@
                 {
                   "Ref": "Environment"
                 },
-                "\n/root/startup.sh\n",
+                "\n",
                 {
                   "Ref": "UserData"
                 }

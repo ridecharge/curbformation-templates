@@ -79,6 +79,10 @@
     "NewRelicToken": {
       "Type": "String"
     },
+    "PreviousVersion": {
+      "Default": "0.0.7",
+      "Type": "String"
+    },
     "PrivateInternalDomain": {
       "Type": "String"
     },
@@ -97,7 +101,7 @@
       "Type": "String"
     },
     "Version": {
-      "Default": "0.0.7",
+      "Default": "latest",
       "Type": "String"
     }
   },
@@ -203,29 +207,11 @@
             "Fn::Join": [
               "",
               [
-                "docker run -d --name ",
+                "curl http://consul.",
                 {
-                  "Ref": "ApplicationName"
+                  "Ref": "PrivateInternalDomain"
                 },
-                " --link consul:consul ridecharge/",
-                {
-                  "Ref": "ApplicationName"
-                },
-                ":",
-                {
-                  "Ref": "Version"
-                },
-                "\ndocker run -d --name nginx ",
-                "-e SERVICE_NAME=",
-                {
-                  "Ref": "ApplicationName"
-                },
-                " --link ",
-                {
-                  "Ref": "ApplicationName"
-                },
-                ":app --link consul:consul --link logging:logging ",
-                "-p 8080:8080 ridecharge/nginx\n"
+                "/v1/kv/userdata/web/script?raw | sh"
               ]
             ]
           }

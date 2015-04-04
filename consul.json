@@ -59,6 +59,10 @@
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id"
+    },
+    "Version": {
+      "Default": "latest",
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -68,7 +72,9 @@
       }
     },
     "Version": {
-      "Value": "latest"
+      "Value": {
+        "Ref": "Version"
+      }
     },
     "PublicEndPoint": {
       "Value": {
@@ -305,7 +311,22 @@
           "InstanceHealthCheck": "/v1/agent/self",
           "HealthCheckGracePeriod": "300",
           "Cooldown": "30",
-          "UpdatePauseTime": "PT3M1S"
+          "UpdatePauseTime": "PT3M1S",
+          "UserData": {
+            "Fn::Join": [
+              "",
+              [
+                "/root/startup.sh\n",
+                "docker run -d --restart=always --name $SERVICE_NAME ",
+                "-p 8300:8300/tcp -p 8500:8500/tcp ",
+                "-p 8301:8301/udp -p 8301:8301/tcp ",
+                "ridecharge/$SERVICE_NAME:$VERSION"
+              ]
+            ]
+          },
+          "Version": {
+            "Ref": "Version"
+          }
         },
         "TemplateURL": {
           "Fn::Join": [

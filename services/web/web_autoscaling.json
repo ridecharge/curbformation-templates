@@ -13,6 +13,13 @@
     "ApplicationName": {
       "Type": "String"
     },
+    "Version": {
+      "Type": "String"
+    },
+    "UserData": {
+      "Type": "String",
+      "Default": ""
+    },
     "InstanceType": {
       "Description": "Instance type for instance pair.",
       "Type": "String",
@@ -53,11 +60,6 @@
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id"
-    },
-    "UserData": {
-      "Description": "Userdata to pass to instance startup.",
-      "Type": "String",
-      "Default": ""
     },
     "Scheme": {
       "Type": "String",
@@ -389,7 +391,15 @@
                 {
                   "Ref": "Environment"
                 },
-                "\n/root/startup.sh\n",
+                "\nexport SERVICE_NAME=",
+                {
+                  "Ref": "ApplicationName"
+                },
+                "\nexport VERSION=",
+                {
+                  "Ref": "Version"
+                },
+                "\n",
                 {
                   "Ref": "UserData"
                 }
