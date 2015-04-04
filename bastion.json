@@ -99,7 +99,7 @@
                 {
                   "Ref": "PrivateInternalDomain"
                 },
-                "/v1/keys/userdata/eni/script?raw | sh"
+                "/v1/kv/userdata/eni/script?raw | sh"
               ]
             ]
           },
