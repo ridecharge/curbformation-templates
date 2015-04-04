@@ -32,6 +32,10 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
+    "InfrastructureVPCPublicSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
     "InfrastructureVPC": {
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
@@ -55,6 +59,14 @@
     },
     "InfrastructureInternalBastionSecurityGroup": {
       "Type": "String"
+    },
+    "Version": {
+      "Default": "latest",
+      "Type": "String"
+    },
+    "PreviousVersion": {
+      "Default": "latest",
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -64,7 +76,9 @@
       }
     },
     "Version": {
-      "Value": "latest"
+      "Value": {
+        "Ref": "Version"
+      }
     },
     "PublicEndPoint": {
       "Value": {
@@ -308,14 +322,23 @@
               "Outputs.InstanceProfile"
             ]
           },
-          "Subnets": {
+          "InstanceSubnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "LoadBalancerSubnets": {
+            "Ref": "InfrastructureVPCPublicSubnets"
+          },
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           },
           "ImageId": {
             "Ref": "BaseImageId"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
+          },
+          "Version": {
+            "Ref": "Version"
           },
           "UserData": {
             "Fn::Join": [
