@@ -69,7 +69,7 @@
       "Default": "443"
     },
     "Version": {
-      "Default": "latest",
+      "Default": "0.0.35",
       "Type": "String"
     },
     "PreviousVersion": {

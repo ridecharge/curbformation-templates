@@ -219,6 +219,7 @@
         "AllocatedStorage": {
           "Ref": "AllocatedStorage"
         },
+        "DeletionPolicy": "Snapshot",
         "DBInstanceClass": {
           "Ref": "DBInstanceClass"
         },
