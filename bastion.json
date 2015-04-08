@@ -30,7 +30,15 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
+    "InfrastructureVPCPublicSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
     "InfrastructureInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "ApplicationVPCPublicSubnets": {
+      "Description": "Subnets to launch app into.",
       "Type": "String"
     },
     "ApplicationVPCPrivateSubnets": {
@@ -107,7 +115,7 @@
             "Ref": "ApplicationName"
           },
           "Subnets": {
-            "Ref": "InfrastructureVPCPrivateSubnets"
+            "Ref": "InfrastructureVPCPublicSubnets"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -120,7 +128,7 @@
           },
           "VpcName": "infrastructure",
           "SecurityGroups": {
-            "Ref": "InfrastructureInternalBastionSecurityGroup"
+            "Ref": "InfrastructureExternalBastionSecurityGroup"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
@@ -172,7 +180,7 @@
             "Ref": "ApplicationName"
           },
           "Subnets": {
-            "Ref": "ApplicationVPCPrivateSubnets"
+            "Ref": "ApplicationVPCPublicSubnets"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -185,7 +193,7 @@
           },
           "VpcName": "application",
           "SecurityGroups": {
-            "Ref": "ApplicationInternalBastionSecurityGroup"
+            "Ref": "ApplicationExternalBastionSecurityGroup"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
