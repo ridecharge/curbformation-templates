@@ -32,7 +32,7 @@
     "ImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-084c7c60",
+      "Default": "ami-1c6a5574",
       "Type": "String"
     },
     "InfrastructureInternalBastionSecurityGroup": {
