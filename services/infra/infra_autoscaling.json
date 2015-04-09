@@ -71,6 +71,10 @@
     },
     "TemplateURLPrefix": {
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Mappings": {
@@ -249,6 +253,10 @@
               "",
               [
                 "#!/bin/sh",
+                "\nexport SERIAL=",
+                {
+                  "Ref": "Serial"
+                },
                 "\nexport LOGGLY_TOKEN=",
                 {
                   "Ref": "LogglyToken"

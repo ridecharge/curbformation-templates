@@ -44,11 +44,8 @@
   },
   "Mappings": {
     "PrivateZones": {
-      "test": {
-        "ZoneId": "Z2QDD62MMWX9ID"
-      },
-      "ops1": {
-        "ZoneId": "Z2QDD62MMWX9ID"
+      "stage": {
+        "ZoneId": "Z12KSQECKBLE02"
       }
     }
   },

@@ -103,6 +103,10 @@
     "Version": {
       "Default": "latest",
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Resources": {
@@ -177,6 +181,9 @@
           },
           "InstanceSubnets": {
             "Ref": "ApplicationVPCPrivateSubnets"
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "InstanceType": "m3.medium",
           "LoadBalancerPort": "443",

@@ -55,6 +55,10 @@
       "Type": "String",
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Outputs": {
@@ -110,6 +114,9 @@
                 "/v1/kv/userdata/eni/script?raw | sh"
               ]
             ]
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "Role": {
             "Ref": "ApplicationName"
@@ -187,6 +194,9 @@
               "InstanceProfile",
               "Outputs.InstanceProfile"
             ]
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"

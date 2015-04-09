@@ -128,6 +128,10 @@
     },
     "TemplateURLPrefix": {
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Outputs": {
@@ -379,6 +383,10 @@
               "",
               [
                 "#!/bin/sh",
+                "\nexport SERIAL=",
+                {
+                  "Ref": "Serial"
+                },
                 "\nexport LOGGLY_TOKEN=",
                 {
                   "Ref": "LogglyToken"

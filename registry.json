@@ -67,6 +67,10 @@
     "PreviousVersion": {
       "Default": "latest",
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Outputs": {

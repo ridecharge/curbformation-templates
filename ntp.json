@@ -59,6 +59,10 @@
     },
     "TemplateURLPrefix": {
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Resources": {
@@ -95,6 +99,9 @@
           },
           "ImageId": {
             "Ref": "ImageId"
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [

@@ -63,6 +63,10 @@
     "Version": {
       "Default": "latest",
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Outputs": {
@@ -254,6 +258,9 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
+          "Serial": {
+            "Ref": "Serial"
+          },
           "InstanceSecurityGroups": {
             "Fn::Join": [
               ",",
@@ -298,7 +305,7 @@
             "Ref": "NewRelicToken"
           },
           "Scheme": "internet-facing",
-          "InstanceType": "c4.large",
+          "InstanceType": "m3.medium",
           "ImageId": {
             "Ref": "BaseImageId"
           },

@@ -75,6 +75,10 @@
     "PreviousVersion": {
       "Default": "latest",
       "Type": "String"
+    },
+    "Serial": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Outputs": {
@@ -314,6 +318,9 @@
           "InstanceType": "m3.medium",
           "ImageId": {
             "Ref": "BaseImageId"
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "MinSize": "2",
           "MaxSize": "2",

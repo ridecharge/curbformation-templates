@@ -356,6 +356,22 @@
         ]
       }
     },
+    "InfrastructureExternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "InfrastructureVPC",
+          "Outputs.ExternalBastionSecurityGroup"
+        ]
+      }
+    },
+    "ApplicationExternalBastionSecurityGroup": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ApplicationVPC",
+          "Outputs.ExternalBastionSecurityGroup"
+        ]
+      }
+    },
     "InfrastructureVPCCidrBlock": {
       "Value": {
         "Fn::GetAtt": [
