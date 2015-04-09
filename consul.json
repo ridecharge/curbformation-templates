@@ -41,10 +41,6 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
     "InfrastructureVPC": {
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
@@ -299,12 +295,12 @@
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "LoadBalancerSubnets": {
-            "Ref": "InfrastructureVPCPublicSubnets"
+            "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "Scheme": "internet-facing",
+          "Scheme": "internal",
           "InstanceType": "m3.medium",
           "ImageId": {
             "Ref": "BaseImageId"

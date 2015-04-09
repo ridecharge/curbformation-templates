@@ -85,7 +85,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "2015-04-09 13:35:57.130275",
+      "Default": "",
       "Type": "String"
     },
     "TemplateURLPrefix": {
@@ -150,6 +150,7 @@
             "Fn::Join": [
               "",
               [
+                "service iptables-persistent start\n",
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
                 "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
@@ -258,10 +259,11 @@
             "Fn::Join": [
               "",
               [
+                "service iptables-persistent start\n",
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
                 "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
-                "ridecharge/aws-startup-utils ./nat_monitor.py"
+                "ridecharge/aws-startup-utils ./nat_monitor.py\n"
               ]
             ]
           },
