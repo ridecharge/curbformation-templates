@@ -42,6 +42,9 @@
       "ConstraintDescription": "Must be a valid ami id",
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "Environment": {
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
@@ -65,9 +68,6 @@
       "Type": "String"
     },
     "NewRelicToken": {
-      "Type": "String"
-    },
-    "DockerRepository": {
       "Type": "String"
     },
     "PreviousVersion": {
@@ -162,6 +162,9 @@
           "DeployMaxBatchSize": "1",
           "DeployMinInstancesInService": "1",
           "DesiredCapacity": "2",
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "Environment": {
             "Ref": "Environment"
           },
@@ -217,9 +220,6 @@
           "Scheme": "internal",
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
-          },
-          "DockerRepository": {
-            "Ref": "DockerRepository"
           },
           "UserData": {
             "Fn::Join": [
