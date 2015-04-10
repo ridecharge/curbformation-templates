@@ -13,6 +13,9 @@
     "ApplicationName": {
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "Version": {
       "Type": "String"
     },
@@ -383,6 +386,10 @@
               "",
               [
                 "#!/bin/sh",
+                "\nexport DOCKER_REPO",
+                {
+                  "Ref": "DockerRepository"
+                },
                 "\nexport SERIAL=",
                 {
                   "Ref": "Serial"

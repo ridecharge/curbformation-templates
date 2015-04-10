@@ -29,6 +29,9 @@
       "MinLength": "4",
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "ImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
@@ -126,6 +129,9 @@
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
+          },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
           },
           "UserData": {
             "Fn::Join": [

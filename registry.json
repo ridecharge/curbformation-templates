@@ -1,83 +1,18 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "v1.0 Creates a Docker Registry service",
-  "Parameters": {
-    "Environment": {
-      "Description": "Name of the environment to launch services into.",
-      "Type": "String",
-      "MinLength": "4",
-      "MaxLength": "8",
-      "AllowedPattern": "[a-z0-9]*",
-      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
-    },
-    "AvailabilityZones": {
-      "Description": "AvailabilityZones to launch networking stacks into.",
-      "Type": "String"
-    },
-    "ApplicationName": {
-      "Type": "String"
-    },
-    "LogglyToken": {
-      "Type": "String"
-    },
-    "NewRelicToken": {
-      "Type": "String"
-    },
-    "BaseImageId": {
-      "Type": "String",
-      "AllowedPattern": "ami-[a-z0-9]{8}",
-      "ConstraintDescription": "Must be a valid ami id"
-    },
-    "InfrastructureVPCPrivateSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
-    "InfrastructureVPC": {
-      "Description": "VPC to launch this subnet into.",
-      "Type": "AWS::EC2::VPC::Id"
-    },
-    "PrivateInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PrivateInternalDomain": {
-      "Type": "String"
-    },
-    "PublicInternalHostedZone": {
-      "Description": "Route53 Private Internal Hosted Zone for VPC.",
-      "Type": "String"
-    },
-    "PublicInternalDomain": {
-      "Type": "String"
-    },
-    "TemplateURLPrefix": {
-      "Type": "String"
-    },
-    "InfrastructureInternalBastionSecurityGroup": {
-      "Type": "String"
-    },
-    "Version": {
-      "Default": "latest",
-      "Type": "String"
-    },
-    "PreviousVersion": {
-      "Default": "latest",
-      "Type": "String"
-    },
-    "Serial": {
-      "Type": "String",
-      "Default": ""
-    }
-  },
   "Outputs": {
     "ApplicationName": {
       "Value": {
         "Ref": "ApplicationName"
       }
     },
-    "Version": {
+    "PrivateEndPoint": {
       "Value": {
-        "Ref": "Version"
+        "Fn::GetAtt": [
+          "PrivateDNSRecord",
+          "Outputs.EndPoint"
+        ]
       }
     },
     "PublicEndPoint": {
@@ -88,50 +23,91 @@
         ]
       }
     },
-    "PrivateEndPoint": {
+    "Version": {
       "Value": {
-        "Fn::GetAtt": [
-          "PrivateDNSRecord",
-          "Outputs.EndPoint"
-        ]
+        "Ref": "Version"
       }
     }
   },
+  "Parameters": {
+    "ApplicationName": {
+      "Type": "String"
+    },
+    "AvailabilityZones": {
+      "Description": "AvailabilityZones to launch networking stacks into.",
+      "Type": "String"
+    },
+    "BaseImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Type": "String"
+    },
+    "Environment": {
+      "AllowedPattern": "[a-z0-9]*",
+      "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
+      "Description": "Name of the environment to launch services into.",
+      "MaxLength": "8",
+      "MinLength": "4",
+      "Type": "String"
+    },
+    "InfrastructureInternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "InfrastructureVPC": {
+      "Description": "VPC to launch this subnet into.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "InfrastructureVPCPrivateSubnets": {
+      "Description": "Subnets to launch app into.",
+      "Type": "String"
+    },
+    "LogglyToken": {
+      "Type": "String"
+    },
+    "NewRelicToken": {
+      "Type": "String"
+    },
+    "DockerRepository": {
+      "Type": "String"
+    },
+    "PreviousVersion": {
+      "Default": "latest",
+      "Type": "String"
+    },
+    "PrivateInternalDomain": {
+      "Type": "String"
+    },
+    "PrivateInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "PublicInternalDomain": {
+      "Type": "String"
+    },
+    "PublicInternalHostedZone": {
+      "Description": "Route53 Private Internal Hosted Zone for VPC.",
+      "Type": "String"
+    },
+    "Serial": {
+      "Default": "1428682882",
+      "Type": "String"
+    },
+    "TemplateURLPrefix": {
+      "Type": "String"
+    },
+    "Version": {
+      "Default": "latest",
+      "Type": "String"
+    }
+  },
   "Resources": {
-    "StorageBuckets": {
-      "Type": "AWS::CloudFormation::Stack",
+    "AccessKeys": {
       "Properties": {
         "Parameters": {
-          "Environment": "global",
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/s3/buckets.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "AccessKeys": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": "global",
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          }
+          "Environment": "global"
         },
         "TemplateURL": {
           "Fn::Join": [
@@ -145,105 +121,17 @@
           ]
         },
         "TimeoutInMinutes": "10"
-      }
-    },
-    "PrivateDNSRecord": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "HostedZoneId": {
-            "Ref": "PrivateInternalHostedZone"
-          },
-          "HostedZoneName": {
-            "Ref": "PrivateInternalDomain"
-          },
-          "LoadBalancerScheme": "internal",
-          "LoadBalancerCanonicalHostedZoneNameID": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.CanonicalHostedZoneNameID"
-            ]
-          },
-          "LoadBalancerDNSHostedZoneName": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.DNSHostedZoneName"
-            ]
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_record_set.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
-    },
-    "PublicDNSRecord": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "HostedZoneId": {
-            "Ref": "PublicInternalHostedZone"
-          },
-          "HostedZoneName": {
-            "Ref": "PublicInternalDomain"
-          },
-          "LoadBalancerScheme": "internal",
-          "LoadBalancerCanonicalHostedZoneNameID": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.CanonicalHostedZoneNameID"
-            ]
-          },
-          "LoadBalancerDNSHostedZoneName": {
-            "Fn::GetAtt": [
-              "Instances",
-              "Outputs.DNSHostedZoneName"
-            ]
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_record_set.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
     },
     "InstanceProfile": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
           "ApplicationName": {
             "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
           }
         },
         "TemplateURL": {
@@ -258,45 +146,36 @@
           ]
         },
         "TimeoutInMinutes": "5"
-      }
-    },
-    "Security": {
-      "Type": "AWS::CloudFormation::Stack",
-      "Properties": {
-        "Parameters": {
-          "Environment": {
-            "Ref": "Environment"
-          },
-          "Vpc": {
-            "Ref": "InfrastructureVPC"
-          },
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          }
-        },
-        "TemplateURL": {
-          "Fn::Join": [
-            "/",
-            [
-              {
-                "Ref": "TemplateURLPrefix"
-              },
-              "services/web/web_security.json"
-            ]
-          ]
-        },
-        "TimeoutInMinutes": "5"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
     },
     "Instances": {
-      "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "AvailabilityZones": {
+            "Ref": "AvailabilityZones"
+          },
+          "Cooldown": "30",
+          "DeployMaxBatchSize": "1",
+          "DeployMinInstancesInService": "1",
+          "DesiredCapacity": "2",
           "Environment": {
             "Ref": "Environment"
           },
-          "LogglyToken": {
-            "Ref": "LogglyToken"
+          "HealthCheckGracePeriod": "300",
+          "ImageId": {
+            "Ref": "BaseImageId"
+          },
+          "InstanceHealthCheck": "/v1/_ping",
+          "InstancePort": "8080",
+          "InstanceProfile": {
+            "Fn::GetAtt": [
+              "InstanceProfile",
+              "Outputs.InstanceProfile"
+            ]
           },
           "InstanceSecurityGroups": {
             "Fn::Join": [
@@ -314,53 +193,34 @@
               ]
             ]
           },
+          "InstanceSubnets": {
+            "Ref": "InfrastructureVPCPrivateSubnets"
+          },
+          "InstanceType": "m3.medium",
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [
               "Security",
               "Outputs.LoadBalancerSecurityGroup"
             ]
           },
-          "Scheme": "internal",
-          "InstanceType": "m3.medium",
-          "ApplicationName": {
-            "Ref": "ApplicationName"
-          },
-          "AvailabilityZones": {
-            "Ref": "AvailabilityZones"
-          },
-          "InstanceProfile": {
-            "Fn::GetAtt": [
-              "InstanceProfile",
-              "Outputs.InstanceProfile"
-            ]
-          },
-          "InstanceSubnets": {
-            "Ref": "InfrastructureVPCPrivateSubnets"
-          },
           "LoadBalancerSubnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
-          "TemplateURLPrefix": {
-            "Ref": "TemplateURLPrefix"
+          "LogglyToken": {
+            "Ref": "LogglyToken"
           },
-          "ImageId": {
-            "Ref": "BaseImageId"
-          },
+          "MaxSize": "2",
+          "MinSize": "2",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
-          "Version": {
-            "Ref": "Version"
+          "Scheme": "internal",
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
           },
-          "MinSize": "2",
-          "MaxSize": "2",
-          "DesiredCapacity": "2",
-          "DeployMaxBatchSize": "1",
-          "DeployMinInstancesInService": "1",
-          "InstancePort": "8080",
-          "InstanceHealthCheck": "/v1/_ping",
-          "HealthCheckGracePeriod": "300",
-          "Cooldown": "30",
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "UserData": {
             "Fn::Join": [
               "",
@@ -386,6 +246,9 @@
                 "/v1/kv/userdata/registry/script?raw | sh"
               ]
             ]
+          },
+          "Version": {
+            "Ref": "Version"
           }
         },
         "TemplateURL": {
@@ -400,7 +263,150 @@
           ]
         },
         "TimeoutInMinutes": "10"
-      }
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "PrivateDNSRecord": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "HostedZoneId": {
+            "Ref": "PrivateInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PrivateInternalDomain"
+          },
+          "LoadBalancerCanonicalHostedZoneNameID": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
+            ]
+          },
+          "LoadBalancerScheme": "internal"
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "PublicDNSRecord": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "HostedZoneId": {
+            "Ref": "PublicInternalHostedZone"
+          },
+          "HostedZoneName": {
+            "Ref": "PublicInternalDomain"
+          },
+          "LoadBalancerCanonicalHostedZoneNameID": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
+            ]
+          },
+          "LoadBalancerScheme": "internal"
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_record_set.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "Security": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": {
+            "Ref": "Environment"
+          },
+          "Vpc": {
+            "Ref": "InfrastructureVPC"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/web_security.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
+    },
+    "StorageBuckets": {
+      "Properties": {
+        "Parameters": {
+          "ApplicationName": {
+            "Ref": "ApplicationName"
+          },
+          "Environment": "global",
+          "TemplateURLPrefix": {
+            "Ref": "TemplateURLPrefix"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              {
+                "Ref": "TemplateURLPrefix"
+              },
+              "services/web/s3/buckets.json"
+            ]
+          ]
+        },
+        "TimeoutInMinutes": "5"
+      },
+      "Type": "AWS::CloudFormation::Stack"
     }
   }
 }

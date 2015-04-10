@@ -17,6 +17,9 @@
     "ApplicationInternalBastionSecurityGroup": {
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "ApplicationName": {
       "Description": "Short name of the application.",
       "Type": "String"
@@ -145,6 +148,9 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "TerminationPolicy": "OldestInstance",
           "UserData": {
             "Fn::Join": [
@@ -154,7 +160,10 @@
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
                 "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
-                "ridecharge/aws-startup-utils ./nat_monitor.py"
+                {
+                  "Ref": "DockerRepository"
+                },
+                "/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },
@@ -232,6 +241,9 @@
           },
           "Serial": {
             "Ref": "Serial"
+          },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
           },
           "SecurityGroups": {
             "Fn::Join": [

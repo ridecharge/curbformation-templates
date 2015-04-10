@@ -14,6 +14,9 @@
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "PrivateInternalDomain": {
       "Type": "String"
     },
@@ -146,6 +149,9 @@
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           }
@@ -213,6 +219,9 @@
           },
           "LogglyToken": {
             "Ref": "LogglyToken"
+          },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"

@@ -79,6 +79,9 @@
     "NewRelicToken": {
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "PreviousVersion": {
       "Default": "0.0.7",
       "Type": "String"
@@ -209,6 +212,9 @@
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
+          },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
           },
           "UserData": {
             "Fn::Join": [
