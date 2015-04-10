@@ -89,7 +89,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "1428701710",
+      "Default": "1428702325",
       "Type": "String"
     },
     "TemplateURLPrefix": {
@@ -218,6 +218,9 @@
             "Ref": "NewRelicToken"
           },
           "Scheme": "internal",
+          "Serial": {
+            "Ref": "Serial"
+          },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
