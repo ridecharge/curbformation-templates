@@ -32,10 +32,6 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
     "InfrastructureVPC": {
       "Description": "VPC to launch this subnet into.",
       "Type": "AWS::EC2::VPC::Id"
@@ -168,10 +164,16 @@
             "Ref": "PrivateInternalDomain"
           },
           "LoadBalancerScheme": "internal",
-          "LoadBalancerDNSName": {
+          "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
-              "Outputs.LoadBalancerDNSName"
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
             ]
           }
         },
@@ -206,10 +208,16 @@
             "Ref": "PublicInternalDomain"
           },
           "LoadBalancerScheme": "internal",
-          "LoadBalancerDNSName": {
+          "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
               "Instances",
-              "Outputs.LoadBalancerDNSName"
+              "Outputs.CanonicalHostedZoneNameID"
+            ]
+          },
+          "LoadBalancerDNSHostedZoneName": {
+            "Fn::GetAtt": [
+              "Instances",
+              "Outputs.DNSHostedZoneName"
             ]
           }
         },
@@ -330,7 +338,7 @@
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "LoadBalancerSubnets": {
-            "Ref": "InfrastructureVPCPublicSubnets"
+            "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
@@ -344,59 +352,38 @@
           "Version": {
             "Ref": "Version"
           },
+          "MinSize": "2",
+          "MaxSize": "2",
+          "DesiredCapacity": "2",
+          "DeployMaxBatchSize": "1",
+          "DeployMinInstancesInService": "1",
+          "InstancePort": "8080",
+          "InstanceHealthCheck": "/v1/_ping",
+          "HealthCheckGracePeriod": "300",
+          "Cooldown": "30",
           "UserData": {
             "Fn::Join": [
               "",
               [
-                "docker run",
-                " -d",
-                " --restart=always",
-                " --name ",
-                {
-                  "Ref": "ApplicationName"
-                },
-                " -e SETTINGS_FLAVOR=s3",
-                " -e STORAGE_PATH=/registry",
-                " -e AWS_BUCKET=global-",
-                {
-                  "Ref": "ApplicationName"
-                },
-                "-private",
-                " -e AWS_KEY=",
+                "export AWS_KEY=",
                 {
                   "Fn::GetAtt": [
                     "AccessKeys",
                     "Outputs.AccessKey"
                   ]
                 },
-                " -e AWS_SECRET=",
+                "\nexport AWS_SECRET=",
                 {
                   "Fn::GetAtt": [
                     "AccessKeys",
                     "Outputs.SecretAccessKey"
                   ]
                 },
-                " -e SEARCH_BACKEND=sqlalchemy",
-                " -p 5000:5000",
-                " registry:latest\n",
-                "docker run",
-                " -d",
-                " --restart=always",
-                " --link logging:logging",
-                " --link ",
+                "\ncurl http://consul.",
                 {
-                  "Ref": "ApplicationName"
+                  "Ref": "PrivateInternalDomain"
                 },
-                ":",
-                {
-                  "Ref": "ApplicationName"
-                },
-                " -p 8080:8080",
-                " sgarlick987/nginx-",
-                {
-                  "Ref": "ApplicationName"
-                },
-                ":latest"
+                "/v1/kv/userdata/registry/script?raw | sh"
               ]
             ]
           }
