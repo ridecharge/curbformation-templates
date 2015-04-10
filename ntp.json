@@ -61,7 +61,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "1428695760",
+      "Default": "1428699304",
       "Type": "String"
     },
     "TemplateURLPrefix": {

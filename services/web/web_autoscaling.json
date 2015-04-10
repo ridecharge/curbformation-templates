@@ -474,10 +474,10 @@
           "Ref": "AsgLaunchConfiguration"
         },
         "MaxSize": {
-          "Ref": "MinSize"
+          "Ref": "MaxSize"
         },
         "MinSize": {
-          "Ref": "MaxSize"
+          "Ref": "MinSize"
         },
         "VPCZoneIdentifier": {
           "Ref": "InstanceSubnets"

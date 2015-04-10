@@ -89,7 +89,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "1428682882",
+      "Default": "1428701710",
       "Type": "String"
     },
     "TemplateURLPrefix": {
@@ -159,8 +159,8 @@
             "Ref": "AvailabilityZones"
           },
           "Cooldown": "30",
-          "DeployMaxBatchSize": "1",
-          "DeployMinInstancesInService": "1",
+          "DeployMaxBatchSize": "2",
+          "DeployMinInstancesInService": "2",
           "DesiredCapacity": "2",
           "DockerRepository": {
             "Ref": "DockerRepository"
@@ -212,7 +212,7 @@
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "MaxSize": "2",
+          "MaxSize": "4",
           "MinSize": "2",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
@@ -221,6 +221,7 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
+          "UpdatePauseTime": "PT1M30S",
           "UserData": {
             "Fn::Join": [
               "",
