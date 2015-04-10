@@ -54,14 +54,14 @@
     "PreviousImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-9ca996f4",
+      "Default": "ami-909aa5f8",
       "Type": "String"
     },
     "PrivateInternalDomain": {
       "Type": "String"
     },
     "Serial": {
-      "Default": "",
+      "Default": "1428695760",
       "Type": "String"
     },
     "TemplateURLPrefix": {

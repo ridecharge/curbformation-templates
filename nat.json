@@ -17,9 +17,6 @@
     "ApplicationInternalBastionSecurityGroup": {
       "Type": "String"
     },
-    "DockerRepository": {
-      "Type": "String"
-    },
     "ApplicationName": {
       "Description": "Short name of the application.",
       "Type": "String"
@@ -43,6 +40,9 @@
       "Description": "AvailabilityZones to launch services stacks into.",
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "Environment": {
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
@@ -54,7 +54,7 @@
     "ImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-4e87bb26",
+      "Default": "ami-4699a62e",
       "Type": "String"
     },
     "InfrastructureInternalBastionSecurityGroup": {
@@ -102,11 +102,11 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "Environment": {
             "Ref": "Environment"
-          },
-          "Serial": {
-            "Ref": "Serial"
           },
           "ImageId": {
             "Ref": "ImageId"
@@ -142,14 +142,14 @@
               ]
             ]
           },
+          "Serial": {
+            "Ref": "Serial"
+          },
           "Subnets": {
             "Ref": "ApplicationVPCPublicSubnets"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
-          },
-          "DockerRepository": {
-            "Ref": "DockerRepository"
           },
           "TerminationPolicy": "OldestInstance",
           "UserData": {
@@ -218,6 +218,9 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "Environment": {
             "Ref": "Environment"
           },
@@ -239,12 +242,6 @@
           "Role": {
             "Ref": "ApplicationName"
           },
-          "Serial": {
-            "Ref": "Serial"
-          },
-          "DockerRepository": {
-            "Ref": "DockerRepository"
-          },
           "SecurityGroups": {
             "Fn::Join": [
               ",",
@@ -260,6 +257,9 @@
                 }
               ]
             ]
+          },
+          "Serial": {
+            "Ref": "Serial"
           },
           "Subnets": {
             "Ref": "InfrastructureVPCPublicSubnets"

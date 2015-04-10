@@ -256,7 +256,7 @@
               "",
               [
                 "#!/bin/sh",
-                "\nexport DOCKER_REPO",
+                "\nexport DOCKER_REPO=",
                 {
                   "Ref": "DockerRepository"
                 },
