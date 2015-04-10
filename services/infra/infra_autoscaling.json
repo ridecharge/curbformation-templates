@@ -87,7 +87,7 @@
         "healthchecktype": "ELB"
       },
       "bastion": {
-        "public": true,
+        "public": false,
         "healthchecktype": "EC2"
       },
       "ntp": {

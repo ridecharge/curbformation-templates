@@ -39,15 +39,7 @@
       "Description": "Subnets to launch app into.",
       "Type": "String"
     },
-    "InfrastructureVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
-      "Type": "String"
-    },
     "InfrastructureInternalBastionSecurityGroup": {
-      "Type": "String"
-    },
-    "ApplicationVPCPublicSubnets": {
-      "Description": "Subnets to launch app into.",
       "Type": "String"
     },
     "ApplicationVPCPrivateSubnets": {
@@ -131,7 +123,7 @@
             "Ref": "ApplicationName"
           },
           "Subnets": {
-            "Ref": "InfrastructureVPCPublicSubnets"
+            "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -191,7 +183,7 @@
                 {
                   "Ref": "PrivateInternalDomain"
                 },
-                "/v1/keys/userdata/eni/script?raw | sh"
+                "/v1/kv/userdata/eni/script?raw | sh"
               ]
             ]
           },
@@ -199,7 +191,7 @@
             "Ref": "ApplicationName"
           },
           "Subnets": {
-            "Ref": "ApplicationVPCPublicSubnets"
+            "Ref": "ApplicationVPCPrivateSubnets"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
