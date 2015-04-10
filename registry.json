@@ -89,7 +89,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "1428702325",
+      "Default": "1428702871",
       "Type": "String"
     },
     "TemplateURLPrefix": {
@@ -224,7 +224,7 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
-          "UpdatePauseTime": "PT1M30S",
+          "UpdatePauseTime": "PT2M30S",
           "UserData": {
             "Fn::Join": [
               "",

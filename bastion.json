@@ -14,6 +14,12 @@
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "String"
     },
+    "InfrastructureExternalBastionSecurityGroup": {
+      "Type": "String"
+    },
+    "ApplicationExternalBastionSecurityGroup": {
+      "Type": "String"
+    },
     "DockerRepository": {
       "Type": "String"
     },
