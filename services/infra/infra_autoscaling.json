@@ -10,6 +10,9 @@
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "InstanceType": {
       "Description": "Instance type for instance pair.",
       "Type": "String",
@@ -253,6 +256,10 @@
               "",
               [
                 "#!/bin/sh",
+                "\nexport DOCKER_REPO",
+                {
+                  "Ref": "DockerRepository"
+                },
                 "\nexport SERIAL=",
                 {
                   "Ref": "Serial"

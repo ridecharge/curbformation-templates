@@ -11,16 +11,13 @@
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters."
     },
     "PublicExternalDomainBase": {
-      "Type": "String",
-      "Default": "gocurb.com"
+      "Type": "String"
     },
     "PublicInternalDomainBase": {
-      "Type": "String",
-      "Default": "gocurb.io"
+      "Type": "String"
     },
     "PrivateInternalDomainBase": {
-      "Type": "String",
-      "Default": "gocurb.internal"
+      "Type": "String"
     },
     "ApplicationVPC": {
       "Type": "String"

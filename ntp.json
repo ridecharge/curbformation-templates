@@ -21,6 +21,9 @@
       "Description": "AvailabilityZones to launch networking stacks into.",
       "Type": "String"
     },
+    "DockerRepository": {
+      "Type": "String"
+    },
     "Environment": {
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "Can contain 4 to 8 lower case alphanumeric characters.",
@@ -29,13 +32,10 @@
       "MinLength": "4",
       "Type": "String"
     },
-    "DockerRepository": {
-      "Type": "String"
-    },
     "ImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-1c6a5574",
+      "Default": "ami-9ca996f4",
       "Type": "String"
     },
     "InfrastructureInternalBastionSecurityGroup": {
@@ -54,18 +54,18 @@
     "PreviousImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-706f5f18",
+      "Default": "ami-1c6a5574",
       "Type": "String"
     },
     "PrivateInternalDomain": {
       "Type": "String"
     },
-    "TemplateURLPrefix": {
+    "Serial": {
+      "Default": "",
       "Type": "String"
     },
-    "Serial": {
-      "Type": "String",
-      "Default": ""
+    "TemplateURLPrefix": {
+      "Type": "String"
     }
   },
   "Resources": {
@@ -97,14 +97,14 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "DockerRepository": {
+            "Ref": "DockerRepository"
+          },
           "Environment": {
             "Ref": "Environment"
           },
           "ImageId": {
             "Ref": "ImageId"
-          },
-          "Serial": {
-            "Ref": "Serial"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -124,14 +124,14 @@
           "SecurityGroups": {
             "Ref": "InfrastructureInternalBastionSecurityGroup"
           },
+          "Serial": {
+            "Ref": "Serial"
+          },
           "Subnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
-          },
-          "DockerRepository": {
-            "Ref": "DockerRepository"
           },
           "UserData": {
             "Fn::Join": [
