@@ -15,6 +15,14 @@
         ]
       }
     },
+    "PublicEndPoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "PublicDNSRecord",
+          "Outputs.EndPoint"
+        ]
+      }
+    },
     "Version": {
       "Value": {
         "Ref": "Version"
