@@ -152,25 +152,7 @@
           }
         },
         "Name": {
-          "Fn::If": [
-            "IncludeEnvironmentInDomain",
-            {
-              "Fn::Join": [
-                ".",
-                [
-                  {
-                    "Ref": "Environment"
-                  },
-                  {
-                    "Ref": "PublicInternalDomainBase"
-                  }
-                ]
-              ]
-            },
-            {
-              "Ref": "PublicInternalDomainBase"
-            }
-          ]
+          "Ref": "PublicInternalDomainBase"
         }
       }
     },
@@ -191,25 +173,7 @@
           }
         },
         "Name": {
-          "Fn::If": [
-            "IncludeEnvironmentInDomain",
-            {
-              "Fn::Join": [
-                ".",
-                [
-                  {
-                    "Ref": "Environment"
-                  },
-                  {
-                    "Ref": "PublicExternalDomainBase"
-                  }
-                ]
-              ]
-            },
-            {
-              "Ref": "PublicExternalDomainBase"
-            }
-          ]
+          "Ref": "PublicExternalDomainBase"
         }
       }
     },

@@ -31,6 +31,7 @@
       }
     },
     "VPNConnection": {
+      "DependsOn": "VPNGatewayAttachment",
       "Type": "AWS::EC2::VPNConnection",
       "Properties": {
         "Type": "ipsec.1",
