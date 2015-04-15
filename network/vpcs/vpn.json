@@ -3,7 +3,7 @@
   "Description": "v1.0 Creates VPN Connections for VPC",
   "Parameters": {
     "Environment": {
-      "Description": "Name of the environment to launch this VPC into.",
+      "Description": "Name of the environment to launch this VPN Connection into.",
       "Type": "String",
       "MinLength": "4",
       "MaxLength": "8",
