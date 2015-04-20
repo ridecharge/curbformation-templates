@@ -85,10 +85,10 @@
       "Description": "Route53 Private Internal Hosted Zone for VPC.",
       "Type": "String"
     },
-    "PublicInternalDomain": {
+    "PublicExternalDomain": {
       "Type": "String"
     },
-    "PublicInternalHostedZone": {
+    "PublicExternalHostedZone": {
       "Description": "Route53 Private Internal Hosted Zone for VPC.",
       "Type": "String"
     },
@@ -100,7 +100,7 @@
       "Type": "String"
     },
     "Version": {
-      "Default": "latest",
+      "Default": "746863488ae249a4c3fc0e8aba12f670d8f5769d",
       "Type": "String"
     }
   },
@@ -181,6 +181,7 @@
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
           "InstanceType": "m3.medium",
+          "LoadBalancerPort": "443",
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [
               "Security",
@@ -291,10 +292,10 @@
             "Ref": "Environment"
           },
           "HostedZoneId": {
-            "Ref": "PublicInternalHostedZone"
+            "Ref": "PublicExternalHostedZone"
           },
           "HostedZoneName": {
-            "Ref": "PublicInternalDomain"
+            "Ref": "PublicExternalDomain"
           },
           "LoadBalancerCanonicalHostedZoneNameID": {
             "Fn::GetAtt": [
