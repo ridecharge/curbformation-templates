@@ -75,7 +75,7 @@
       "Type": "String"
     },
     "PreviousVersion": {
-      "Default": "latest",
+      "Default": "f191859dd266c8580825932790b369590757c1bd",
       "Type": "String"
     },
     "PrivateInternalDomain": {
@@ -100,7 +100,7 @@
       "Type": "String"
     },
     "Version": {
-      "Default": "746863488ae249a4c3fc0e8aba12f670d8f5769d",
+      "Default": "8ed4169050077fc01c8f41384b350b2daeaa5e28",
       "Type": "String"
     }
   },
@@ -335,6 +335,7 @@
           "Environment": {
             "Ref": "Environment"
           },
+          "LoadBalancerPort": "443",
           "Vpc": {
             "Ref": "InfrastructureVPC"
           }
