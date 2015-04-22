@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "v1.0 Creates a Docker Registry service",
+  "Description": "v1.0 Creates a Curbot service",
   "Outputs": {
     "ApplicationName": {
       "Value": {
@@ -75,7 +75,7 @@
       "Type": "String"
     },
     "PreviousVersion": {
-      "Default": "f191859dd266c8580825932790b369590757c1bd",
+      "Default": "latest",
       "Type": "String"
     },
     "PrivateInternalDomain": {
@@ -93,14 +93,14 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "",
+      "Default": "1429644550",
       "Type": "String"
     },
     "TemplateURLPrefix": {
       "Type": "String"
     },
     "Version": {
-      "Default": "8ed4169050077fc01c8f41384b350b2daeaa5e28",
+      "Default": "latest",
       "Type": "String"
     }
   },
@@ -149,7 +149,7 @@
           "Environment": {
             "Ref": "Environment"
           },
-          "HealthCheckGracePeriod": "300",
+          "HealthCheckGracePeriod": "400",
           "ImageId": {
             "Ref": "BaseImageId"
           },
@@ -206,7 +206,7 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
-          "UpdatePauseTime": "PT1M30S",
+          "UpdatePauseTime": "PT5M",
           "UserData": {
             "Fn::Join": [
               "",
