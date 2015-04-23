@@ -215,7 +215,7 @@
                 {
                   "Ref": "PrivateInternalDomain"
                 },
-                "/v1/kv/userdata/web/script?raw | sh"
+                "/v1/kv/userdata/curbkins/script?raw | sh"
               ]
             ]
           },
