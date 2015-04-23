@@ -72,7 +72,7 @@
       "Default": "443"
     },
     "Version": {
-      "Default": "0.0.35",
+      "Default": "latest",
       "Type": "String"
     },
     "PreviousVersion": {
@@ -81,7 +81,7 @@
     },
     "Serial": {
       "Type": "String",
-      "Default": ""
+      "Default": "0"
     }
   },
   "Outputs": {

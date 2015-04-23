@@ -59,7 +59,7 @@
     },
     "Serial": {
       "Type": "String",
-      "Default": ""
+      "Default": "0"
     }
   },
   "Outputs": {

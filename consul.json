@@ -89,7 +89,7 @@
       "Type": "String"
     },
     "Serial": {
-      "Default": "",
+      "Default": "0",
       "Type": "String"
     },
     "TemplateURLPrefix": {

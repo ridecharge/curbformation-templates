@@ -9,7 +9,7 @@
     },
     "Version": {
       "Value": {
-        "Ref": "ImageId"
+        "Ref": "Version"
       }
     }
   },
@@ -51,10 +51,9 @@
       "MinLength": "4",
       "Type": "String"
     },
-    "ImageId": {
+    "Version": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-4699a62e",
       "Type": "String"
     },
     "InfrastructureInternalBastionSecurityGroup": {
@@ -81,14 +80,13 @@
     "NewRelicToken": {
       "Type": "String"
     },
-    "PreviousImageId": {
+    "PreviousVersion": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Default": "ami-4e87bb26",
       "Type": "String"
     },
     "Serial": {
-      "Default": "1428699293",
+      "Default": "0",
       "Type": "String"
     },
     "TemplateURLPrefix": {
@@ -109,7 +107,7 @@
             "Ref": "Environment"
           },
           "ImageId": {
-            "Ref": "ImageId"
+            "Ref": "Version"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -225,7 +223,7 @@
             "Ref": "Environment"
           },
           "ImageId": {
-            "Ref": "ImageId"
+            "Ref": "Version"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
