@@ -72,6 +72,11 @@
       "Value": {
         "Ref": "BaseImageId"
       }
+    },
+    "PreviousVersion": {
+      "Value": {
+        "Ref": "PreviousVersion"
+      }
     }
   },
   "Resources": {

@@ -110,6 +110,11 @@
           "Outputs.EndPoint"
         ]
       }
+    },
+    "PreviousVersion": {
+      "Value": {
+        "Ref": "PreviousVersion"
+      }
     }
   },
   "Resources": {

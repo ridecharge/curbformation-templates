@@ -11,6 +11,11 @@
       "Value": {
         "Ref": "Version"
       }
+    },
+    "PreviousVersion": {
+      "Value": {
+        "Ref": "PreviousVersion"
+      }
     }
   },
   "Parameters": {
@@ -273,7 +278,10 @@
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
                 "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
-                "ridecharge/aws-startup-utils ./nat_monitor.py\n"
+                {
+                  "Ref": "DockerRepository"
+                },
+                "/aws-startup-utils ./nat_monitor.py"
               ]
             ]
           },

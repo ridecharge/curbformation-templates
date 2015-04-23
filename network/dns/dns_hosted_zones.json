@@ -37,13 +37,9 @@
     "TemplateURLPrefix": {
       "Description": "URL prefix for this stack.",
       "Type": "String"
-    }
-  },
-  "Mappings": {
-    "PrivateZones": {
-      "stage": {
-        "ZoneId": "Z12KSQECKBLE02"
-      }
+    },
+    "PrivateHostedZone": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -63,13 +59,7 @@
   "Outputs": {
     "PrivateInternalHostedZone": {
       "Value": {
-        "Fn::FindInMap": [
-          "PrivateZones",
-          {
-            "Ref": "Environment"
-          },
-          "ZoneId"
-        ]
+        "Ref": "PrivateHostedZone"
       }
     },
     "PrivateInternalDomain": {
@@ -222,13 +212,7 @@
           },
           "Role": "ntp",
           "HostedZoneId": {
-            "Fn::FindInMap": [
-              "PrivateZones",
-              {
-                "Ref": "Environment"
-              },
-              "ZoneId"
-            ]
+            "Ref": "PrivateHostedZone"
           },
           "HostedZoneName": {
             "Ref": "PrivateInternalDomainBase"

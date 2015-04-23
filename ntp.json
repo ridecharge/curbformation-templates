@@ -11,6 +11,11 @@
       "Value": {
         "Ref": "Version"
       }
+    },
+    "PreviousVersion": {
+      "Value": {
+        "Ref": "PreviousVersion"
+      }
     }
   },
   "Parameters": {
