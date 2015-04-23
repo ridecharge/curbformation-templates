@@ -75,7 +75,7 @@
     },
     "PreviousVersion": {
       "Value": {
-        "Ref": "PreviousVersion"
+        "Ref": "BaseImageId"
       }
     }
   },
