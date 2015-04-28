@@ -185,7 +185,7 @@
           "InstanceSubnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
-          "InstanceType": "m3.medium",
+          "InstanceType": "m3.large",
           "LoadBalancerPort": "443",
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [

@@ -29,7 +29,8 @@
       "Default": "m3.medium",
       "AllowedValues": [
         "c4.large",
-        "m3.medium"
+        "m3.medium",
+        "m3.large"
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
