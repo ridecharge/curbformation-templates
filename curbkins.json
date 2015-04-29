@@ -127,7 +127,7 @@
               {
                 "Ref": "TemplateURLPrefix"
               },
-              "services/web/web_profile.json"
+              "services/profiles/curbkins_profile.json"
             ]
           ]
         },
