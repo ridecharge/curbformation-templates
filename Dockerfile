@@ -4,4 +4,4 @@ RUN mkdir /opt/curbformation-templates
 COPY . /opt/curbformation-templates
 WORKDIR /opt/curbformation-templates
 RUN pip install -r requirements.txt
-ENTRYPOINT ["curbformation"]
+ENTRYPOINT ["cf"]
