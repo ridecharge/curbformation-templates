@@ -5,6 +5,3 @@
   sudo: yes
   roles:
     - python3
-  vars:
-    python3_pip_packages:
-      - "git+ssh://git@github.com/ridecharge/curbformation.git#egg=curbformation"
