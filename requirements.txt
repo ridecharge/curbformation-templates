@@ -1,1 +1,1 @@
-https://github.com/ridecharge/curbformation
+https://github.com/ridecharge/curbformation.git
