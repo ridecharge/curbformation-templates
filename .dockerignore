@@ -3,4 +3,3 @@ requirements.yml
 Dockerfile
 .dockerignore
 Makefile
-requirements.txt
