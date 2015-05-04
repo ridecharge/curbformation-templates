@@ -162,7 +162,6 @@
                 "service iptables-persistent start\n",
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
-                "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
                 {
                   "Ref": "DockerRepository"
                 },
@@ -277,7 +276,6 @@
                 "service iptables-persistent start\n",
                 "/root/startup.sh\n",
                 "docker run -d --restart=always ",
-                "-e LOGGLY_TOKEN=$LOGGLY_TOKEN ",
                 {
                   "Ref": "DockerRepository"
                 },

@@ -154,64 +154,6 @@
         "TimeoutInMinutes": "10"
       }
     },
-    "LoadBalancer": {
-      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Condition": "CreateLoadBalancer",
-      "Properties": {
-        "SecurityGroups": {
-          "Ref": "SecurityGroups"
-        },
-        "Scheme": "internal",
-        "Subnets": {
-          "Ref": "Subnets"
-        },
-        "HealthCheck": {
-          "HealthyThreshold": "5",
-          "Interval": "10",
-          "Target": "tcp:22",
-          "Timeout": "5",
-          "UnhealthyThreshold": "3"
-        },
-        "Listeners": [
-          {
-            "InstancePort": "9999",
-            "InstanceProtocol": "TCP",
-            "LoadBalancerPort": "9999",
-            "Protocol": "TCP"
-          }
-        ],
-        "LoadBalancerName": {
-          "Fn::Join": [
-            "-",
-            [
-              {
-                "Ref": "Environment"
-              },
-              {
-                "Ref": "VpcName"
-              },
-              {
-                "Ref": "Role"
-              }
-            ]
-          ]
-        },
-        "Tags": [
-          {
-            "Key": "Environment",
-            "Value": {
-              "Ref": "Environment"
-            }
-          },
-          {
-            "Key": "Role",
-            "Value": {
-              "Ref": "Role"
-            }
-          }
-        ]
-      }
-    },
     "AsgLaunchConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
