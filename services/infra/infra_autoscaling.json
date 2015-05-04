@@ -281,19 +281,6 @@
             "Ref": "AsgSnsTopic"
           }
         },
-        "LoadBalancerNames": [
-          {
-            "Fn::If": [
-              "CreateLoadBalancer",
-              {
-                "Ref": "LoadBalancer"
-              },
-              {
-                "Ref": "AWS::NoValue"
-              }
-            ]
-          }
-        ],
         "TerminationPolicies": [
           {
             "Ref": "TerminationPolicy"
