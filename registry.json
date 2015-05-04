@@ -234,6 +234,20 @@
             "Fn::Join": [
               "",
               [
+                "export AWS_ACCESS_KEY=",
+                {
+                  "Fn::GetAtt": [
+                    "AccessKeys",
+                    "Outputs.AccessKey"
+                  ]
+                },
+                "\nexport AWS_SECRET_KEY=",
+                {
+                  "Fn::GetAtt": [
+                    "AccessKeys",
+                    "Outputs.SecretAccessKey"
+                  ]
+                },
                 "\nexport AWS_REGION=",
                 {
                   "Ref": "AWS::Region"
