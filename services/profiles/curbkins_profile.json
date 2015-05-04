@@ -79,6 +79,7 @@
                     "sns:*",
                     "ec2:*",
                     "iam:PassRole",
+                    "iam:PutRolePolicy",
                     "autoscaling:*",
                     "elasticloadbalancing:*",
                     "s3:*",

@@ -261,7 +261,7 @@
               "MaxBatchSize"
             ]
           },
-          "PauseTime": "PT2M30S"
+          "PauseTime": "PT4M0S"
         }
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
