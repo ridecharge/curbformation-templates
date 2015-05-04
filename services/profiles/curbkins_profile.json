@@ -75,7 +75,13 @@
                     "cloudformation:ListStacks",
                     "cloudformation:ListStackResources",
                     "cloudformation:UpdateStack",
-                    "cloudformation:ValidateTemplate"
+                    "cloudformation:ValidateTemplate",
+                    "sns:*",
+                    "ec2:*",
+                    "iam:PassRole",
+                    "autoscaling:*",
+                    "elasticloadbalancing:*",
+                    "s3:*"
                   ],
                   "Resource": [
                     "*"
