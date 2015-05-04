@@ -81,7 +81,8 @@
                     "iam:PassRole",
                     "autoscaling:*",
                     "elasticloadbalancing:*",
-                    "s3:*"
+                    "s3:*",
+                    "cloudwatch:*"
                   ],
                   "Resource": [
                     "*"
