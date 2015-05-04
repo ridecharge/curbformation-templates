@@ -84,32 +84,22 @@
     "Roles": {
       "nat": {
         "public": true,
-        "healthchecktype": "ELB"
+        "MaxSize": "4",
+        "MinInstancesInService": "2",
+        "MaxBatchSize": "2"
       },
       "bastion": {
         "public": false,
-        "healthchecktype": "EC2"
+        "MaxSize": "2",
+        "MinInstancesInService": "1",
+        "MaxBatchSize": "1"
       },
       "ntp": {
         "public": false,
-        "healthchecktype": "EC2"
+        "MaxSize": "2",
+        "MinInstancesInService": "1",
+        "MaxBatchSize": "1"
       }
-    }
-  },
-  "Conditions": {
-    "CreateLoadBalancer": {
-      "Fn::Equals": [
-        {
-          "Fn::FindInMap": [
-            "Roles",
-            {
-              "Ref": "Role"
-            },
-            "healthchecktype"
-          ]
-        },
-        "ELB"
-      ]
     }
   },
   "Outputs": {
@@ -311,8 +301,24 @@
     "AutoScalingGroup": {
       "UpdatePolicy": {
         "AutoScalingRollingUpdate": {
-          "MinInstancesInService": "1",
-          "MaxBatchSize": "1",
+          "MinInstancesInService": {
+            "Fn::FindInMap": [
+              "Roles",
+              {
+                "Ref": "Role"
+              },
+              "MinInstancesInService"
+            ]
+          },
+          "MaxBatchSize": {
+            "Fn::FindInMap": [
+              "Roles",
+              {
+                "Ref": "Role"
+              },
+              "MaxBatchSize"
+            ]
+          },
           "PauseTime": "PT2M30S"
         }
       },
@@ -354,19 +360,19 @@
         "Cooldown": "30",
         "DesiredCapacity": "2",
         "HealthCheckGracePeriod": "30",
-        "HealthCheckType": {
+        "HealthCheckType": "EC2",
+        "LaunchConfigurationName": {
+          "Ref": "AsgLaunchConfiguration"
+        },
+        "MaxSize": {
           "Fn::FindInMap": [
             "Roles",
             {
               "Ref": "Role"
             },
-            "healthchecktype"
+            "MaxSize"
           ]
         },
-        "LaunchConfigurationName": {
-          "Ref": "AsgLaunchConfiguration"
-        },
-        "MaxSize": "2",
         "MinSize": "2",
         "VPCZoneIdentifier": {
           "Ref": "Subnets"
