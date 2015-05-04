@@ -161,7 +161,7 @@
               [
                 "service iptables-persistent start\n",
                 "/root/startup.sh\n",
-                "docker run -d --restart=always ",
+                "docker run ",
                 {
                   "Ref": "DockerRepository"
                 },
@@ -275,7 +275,7 @@
               [
                 "service iptables-persistent start\n",
                 "/root/startup.sh\n",
-                "docker run -d --restart=always ",
+                "docker run ",
                 {
                   "Ref": "DockerRepository"
                 },
