@@ -195,6 +195,9 @@
           "Environment": {
             "Ref": "Environment"
           },
+          "InternalBastionSecurityGroup": {
+            "Ref": "ApplicationInternalBastionSecurityGroup"
+          },
           "Vpc": {
             "Ref": "ApplicationVPC"
           }
@@ -305,6 +308,9 @@
         "Parameters": {
           "CidrBlock": {
             "Ref": "InfrastructureVPCCidrBlock"
+          },
+          "InternalBastionSecurityGroup": {
+            "Ref": "InfrastructureInternalBastionSecurityGroup"
           },
           "Environment": {
             "Ref": "Environment"

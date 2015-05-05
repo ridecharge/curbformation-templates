@@ -18,6 +18,9 @@
       "MaxLength": "14",
       "AllowedPattern": "[a-z0-9]*",
       "ConstraintDescription": "can contain only lower case alphanumeric characters."
+    },
+    "InternalBastionSecurityGroup": {
+      "Type": "String"
     }
   },
   "Outputs": {
@@ -121,7 +124,7 @@
         "ToPort": "6514"
       }
     },
-    "TCPPingIngress": {
+    "SSHIngress": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
@@ -131,7 +134,7 @@
         "FromPort": "22",
         "ToPort": "22",
         "SourceSecurityGroupId": {
-          "Ref": "SecurityGroup"
+          "Ref": "InternalBastionSecurityGroup"
         }
       }
     },
