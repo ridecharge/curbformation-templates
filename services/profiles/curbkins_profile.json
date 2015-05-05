@@ -76,6 +76,7 @@
                     "cloudformation:ListStackResources",
                     "cloudformation:UpdateStack",
                     "cloudformation:ValidateTemplate",
+                    "cloudformation:SetStackPolicy",
                     "sns:*",
                     "ec2:*",
                     "iam:PassRole",
