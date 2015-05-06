@@ -164,9 +164,9 @@
             "Ref": "AvailabilityZones"
           },
           "Cooldown": "30",
-          "DeployMaxBatchSize": "2",
-          "DeployMinInstancesInService": "2",
-          "DesiredCapacity": "2",
+          "DeployMaxBatchSize": "4",
+          "DeployMinInstancesInService": "4",
+          "DesiredCapacity": "4",
           "DockerRepository": {
             "Ref": "DockerRepository"
           },
@@ -204,7 +204,7 @@
           "InstanceSubnets": {
             "Ref": "InfrastructureVPCPrivateSubnets"
           },
-          "InstanceType": "m3.medium",
+          "InstanceType": "c4.large",
           "LoadBalancerSecurityGroup": {
             "Fn::GetAtt": [
               "Security",
@@ -217,8 +217,8 @@
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
-          "MaxSize": "4",
-          "MinSize": "2",
+          "MaxSize": "8",
+          "MinSize": "4",
           "NewRelicToken": {
             "Ref": "NewRelicToken"
           },
