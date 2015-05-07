@@ -40,6 +40,20 @@
         }
       }
     },
+    "RedisCloudIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "CidrIp": {
+          "Ref": "CidrBlock"
+        },
+        "FromPort": "10000",
+        "GroupId": {
+          "Ref": "SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "ToPort": "19999"
+      }
+    },
     "DNSIngress": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
