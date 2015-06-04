@@ -64,27 +64,15 @@
                   "Sid": "Stmt1429116727000",
                   "Effect": "Allow",
                   "Action": [
-                    "cloudformation:CancelUpdateStack",
-                    "cloudformation:DescribeStackEvents",
-                    "cloudformation:DescribeStackResource",
-                    "cloudformation:DescribeStackResources",
-                    "cloudformation:DescribeStacks",
-                    "cloudformation:GetStackPolicy",
-                    "cloudformation:GetTemplate",
-                    "cloudformation:GetTemplateSummary",
-                    "cloudformation:ListStacks",
-                    "cloudformation:ListStackResources",
-                    "cloudformation:UpdateStack",
-                    "cloudformation:ValidateTemplate",
-                    "cloudformation:SetStackPolicy",
+                    "cloudformation:*",
                     "sns:*",
                     "ec2:*",
-                    "iam:PassRole",
-                    "iam:PutRolePolicy",
+                    "iam:*",
                     "autoscaling:*",
                     "elasticloadbalancing:*",
                     "s3:*",
-                    "cloudwatch:*"
+                    "cloudwatch:*",
+                    "route53:*"
                   ],
                   "Resource": [
                     "*"

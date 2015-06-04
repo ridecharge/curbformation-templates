@@ -13,6 +13,10 @@
     "ApplicationName": {
       "Type": "String"
     },
+    "ConnectionIdleTimeout": {
+      "Type": "Number",
+      "Default": 60
+    },
     "DockerRepository": {
       "Type": "String"
     },
@@ -243,6 +247,11 @@
         "CrossZone": true,
         "Subnets": {
           "Ref": "LoadBalancerSubnets"
+        },
+        "ConnectionSettings": {
+          "IdleTimeout": {
+            "Ref": "ConnectionIdleTimeout"
+          }
         },
         "HealthCheck": {
           "HealthyThreshold": "5",

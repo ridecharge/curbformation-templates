@@ -163,6 +163,7 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "ConnectionIdleTimeout": 600,
           "Cooldown": "30",
           "DeployMaxBatchSize": "4",
           "DeployMinInstancesInService": "4",

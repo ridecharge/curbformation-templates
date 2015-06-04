@@ -154,7 +154,7 @@
           "Environment": {
             "Ref": "Environment"
           },
-          "HealthCheckGracePeriod": "400",
+          "HealthCheckGracePeriod": "600",
           "ImageId": {
             "Ref": "BaseImageId"
           },
@@ -211,7 +211,7 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
-          "UpdatePauseTime": "PT5M",
+          "UpdatePauseTime": "PT6M",
           "UserData": {
             "Fn::Join": [
               "",
