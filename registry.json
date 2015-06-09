@@ -32,6 +32,16 @@
       "Value": {
         "Ref": "PreviousVersion"
       }
+    },
+    "Deploying": {
+      "Value": {
+        "Ref": "Deploying"
+      }
+    },
+    "DeployedAsg": {
+      "Value": {
+        "Ref": "DeployedAsg"
+      }
     }
   },
   "Parameters": {
@@ -103,6 +113,22 @@
     "Version": {
       "Default": "latest",
       "Type": "String"
+    },
+    "Deploying": {
+      "Type": "String",
+      "Description": "Whether the deployment is currently in the deploying state",
+      "AllowedValues": [
+        "True",
+        "False"
+      ]
+    },
+    "DeployedAsg": {
+      "Type": "String",
+      "Description": "The AutoScalingGroup that is considered deployed.",
+      "AllowedValues": [
+        "A",
+        "B"
+      ]
     }
   },
   "Resources": {
@@ -159,6 +185,15 @@
         "Parameters": {
           "ApplicationName": {
             "Ref": "ApplicationName"
+          },
+          "Deploying": {
+            "Ref": "Deploying"
+          },
+          "DeployedAsg": {
+            "Ref": "DeployedAsg"
+          },
+          "PreviousVersion": {
+            "Ref": "PreviousVersion"
           },
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
