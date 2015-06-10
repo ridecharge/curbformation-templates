@@ -144,6 +144,9 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "PreviousVersion": {
+            "Ref": "PreviousVersion"
+          },
           "Cooldown": "30",
           "DeployMaxBatchSize": "1",
           "DeployMinInstancesInService": "1",

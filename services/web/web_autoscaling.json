@@ -17,6 +17,24 @@
       "Type": "Number",
       "Default": 60
     },
+    "Deploying": {
+      "Type": "String",
+      "Description": "Whether the deployment is currently in the deploying state",
+      "AllowedValues": [
+        "True",
+        "False"
+      ],
+      "Default": "False"
+    },
+    "DeployedAsg": {
+      "Type": "String",
+      "Description": "The AutoScalingGroup that is considered deployed.",
+      "AllowedValues": [
+        "A",
+        "B"
+      ],
+      "Default": "A"
+    },
     "DockerRepository": {
       "Type": "String"
     },
@@ -37,6 +55,14 @@
         "m3.large"
       ],
       "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+    "PreviousVersion": {
+      "Type": "String"
+    },
+    "PreviousImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Type": "String"
     },
     "LoadBalancerSecurityGroup": {
       "Description": "Security Groups for the instances",
@@ -185,6 +211,70 @@
         },
         "443"
       ]
+    },
+    "IsDeploying": {
+      "Fn::Equals": [
+        {
+          "Ref": "Deploying"
+        },
+        "True"
+      ]
+    },
+    "PrimaryAsgA": {
+      "Fn::Equals": [
+        {
+          "Ref": "DeployedAsg"
+        },
+        "A"
+      ]
+    },
+    "PrimaryAsgB": {
+      "Fn::Equals": [
+        {
+          "Ref": "DeployedAsg"
+        },
+        "B"
+      ]
+    },
+    "CreateAsgA": {
+      "Fn::Or": [
+        {
+          "Condition": "IsDeploying"
+        },
+        {
+          "Condition": "PrimaryAsgA"
+        }
+      ]
+    },
+    "CreateAsgB": {
+      "Fn::Or": [
+        {
+          "Condition": "IsDeploying"
+        },
+        {
+          "Condition": "PrimaryAsgB"
+        }
+      ]
+    },
+    "UsePreviousAsgA": {
+      "Fn::And": [
+        {
+          "Condition": "IsDeploying"
+        },
+        {
+          "Condition": "PrimaryAsgB"
+        }
+      ]
+    },
+    "UsePreviousAsgB": {
+      "Fn::And": [
+        {
+          "Condition": "IsDeploying"
+        },
+        {
+          "Condition": "PrimaryAsgA"
+        }
+      ]
     }
   },
   "Resources": {
@@ -199,7 +289,15 @@
             "Ref": "ApplicationName"
           },
           "AutoScalingGroupName": {
-            "Ref": "AutoScalingGroup"
+            "Fn::If": [
+              "PrimaryAsgA",
+              {
+                "Ref": "AutoScalingGroup"
+              },
+              {
+                "Ref": "AutoScalingGroupB"
+              }
+            ]
           },
           "AlarmName": {
             "Fn::Join": [
@@ -372,6 +470,7 @@
       }
     },
     "AsgLaunchConfiguration": {
+      "Condition": "CreateAsgA",
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
         "EbsOptimized": false,
@@ -379,7 +478,15 @@
           "Ref": "InstanceProfile"
         },
         "ImageId": {
-          "Ref": "ImageId"
+          "Fn::If": [
+            "UsePreviousAsgA",
+            {
+              "Ref": "PreviousImageId"
+            },
+            {
+              "Ref": "ImageId"
+            }
+          ]
         },
         "InstanceType": {
           "Ref": "InstanceType"
@@ -422,7 +529,15 @@
                 },
                 "\nexport VERSION=",
                 {
-                  "Ref": "Version"
+                  "Fn::If": [
+                    "UsePreviousAsgA",
+                    {
+                      "Ref": "PreviousVersion"
+                    },
+                    {
+                      "Ref": "Version"
+                    }
+                  ]
                 },
                 "\n",
                 {
@@ -448,6 +563,7 @@
           }
         }
       },
+      "Condition": "CreateAsgA",
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
         "AvailabilityZones": {
@@ -482,6 +598,181 @@
         "HealthCheckType": "ELB",
         "LaunchConfigurationName": {
           "Ref": "AsgLaunchConfiguration"
+        },
+        "MaxSize": {
+          "Ref": "MaxSize"
+        },
+        "MinSize": {
+          "Ref": "MinSize"
+        },
+        "VPCZoneIdentifier": {
+          "Ref": "InstanceSubnets"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "-",
+                [
+                  {
+                    "Ref": "Environment"
+                  },
+                  {
+                    "Ref": "ApplicationName"
+                  }
+                ]
+              ]
+            },
+            "PropagateAtLaunch": "true"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "Environment"
+            },
+            "PropagateAtLaunch": "true"
+          },
+          {
+            "Key": "Role",
+            "Value": {
+              "Ref": "ApplicationName"
+            },
+            "PropagateAtLaunch": "true"
+          }
+        ]
+      }
+    },
+    "AsgLaunchConfigurationB": {
+      "Condition": "CreateAsgB",
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "EbsOptimized": false,
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        
+        "ImageId": {
+          "Fn::If": [
+            "UsePreviousAsgB",
+            {
+              "Ref": "PreviousImageId"
+            },
+            {
+              "Ref": "ImageId"
+            }
+          ]
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "KeyName": {
+          "Ref": "Environment"
+        },
+        "SecurityGroups": {
+          "Ref": "InstanceSecurityGroups"
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh",
+                "\nexport DOCKER_REPO=",
+                {
+                  "Ref": "DockerRepository"
+                },
+                "\nexport SERIAL=",
+                {
+                  "Ref": "Serial"
+                },
+                "\nexport LOGGLY_TOKEN=",
+                {
+                  "Ref": "LogglyToken"
+                },
+                "\nexport NR_TOKEN=",
+                {
+                  "Ref": "NewRelicToken"
+                },
+                "\nexport ENVIRONMENT=",
+                {
+                  "Ref": "Environment"
+                },
+                "\nexport SERVICE_NAME=",
+                {
+                  "Ref": "ApplicationName"
+                },
+                "\nexport VERSION=",
+                {
+                  "Fn::If": [
+                    "UsePreviousAsgB",
+                    {
+                      "Ref": "PreviousVersion"
+                    },
+                    {
+                      "Ref": "Version"
+                    }
+                  ]
+                },
+                "\n",
+                {
+                  "Ref": "UserData"
+                }
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "AutoScalingGroupB": {
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": {
+            "Ref": "DeployMinInstancesInService"
+          },
+          "MaxBatchSize": {
+            "Ref": "DeployMaxBatchSize"
+          },
+          "PauseTime": {
+            "Ref": "UpdatePauseTime"
+          }
+        }
+      },
+      "Condition": "CreateAsgB",
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "AvailabilityZones": {
+          "Ref": "AvailabilityZones"
+        },
+        "NotificationConfiguration": {
+          "NotificationTypes": [
+            "autoscaling:EC2_INSTANCE_LAUNCH",
+            "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+            "autoscaling:EC2_INSTANCE_TERMINATE",
+            "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+            "autoscaling:TEST_NOTIFICATION"
+          ],
+          "TopicARN": {
+            "Ref": "AsgSnsTopic"
+          }
+        },
+        "LoadBalancerNames": [
+          {
+            "Ref": "LoadBalancer"
+          }
+        ],
+        "Cooldown": {
+          "Ref": "Cooldown"
+        },
+        "DesiredCapacity": {
+          "Ref": "DesiredCapacity"
+        },
+        "HealthCheckGracePeriod": {
+          "Ref": "HealthCheckGracePeriod"
+        },
+        "HealthCheckType": "ELB",
+        "LaunchConfigurationName": {
+          "Ref": "AsgLaunchConfigurationB"
         },
         "MaxSize": {
           "Ref": "MaxSize"
