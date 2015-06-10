@@ -1,4 +1,4 @@
-FROM registry.gocurb.internal:80/ansible
+FROM registry.gocurb.internal:80/curbformation-templates-shared
 
 RUN mkdir /opt/curbformation-templates
 COPY . /opt/curbformation-templates
