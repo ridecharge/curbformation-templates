@@ -274,6 +274,9 @@
           "TemplateURLPrefix": {
             "Ref": "TemplateURLPrefix"
           },
+          "PreviousVersion": {
+            "Ref": "PreviousVersion"
+          },
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
