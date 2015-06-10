@@ -2,6 +2,16 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "v1.0 Creates a Docker Registry service",
   "Outputs": {
+    "BaseImageId": {
+      "Value": {
+        "Ref": "BaseImageId"
+      }
+    },
+    "PreviousBaseImageId": {
+      "Value": {
+        "Ref": "PreviousBaseImageId"
+      }
+    },
     "ApplicationName": {
       "Value": {
         "Ref": "ApplicationName"
@@ -53,6 +63,11 @@
       "Type": "String"
     },
     "BaseImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Type": "String"
+    },
+    "PreviousBaseImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
       "Type": "String"
@@ -212,6 +227,9 @@
           "HealthCheckGracePeriod": "300",
           "ImageId": {
             "Ref": "BaseImageId"
+          },
+          "PreviousImageId": {
+            "Ref": "PreviousBaseImageId"
           },
           "InstanceHealthCheck": "/v2/",
           "InstancePort": "8080",

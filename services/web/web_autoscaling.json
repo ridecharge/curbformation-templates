@@ -59,6 +59,11 @@
     "PreviousVersion": {
       "Type": "String"
     },
+    "PreviousImageId": {
+      "AllowedPattern": "ami-[a-z0-9]{8}",
+      "ConstraintDescription": "Must be a valid ami id",
+      "Type": "String"
+    },
     "LoadBalancerSecurityGroup": {
       "Description": "Security Groups for the instances",
       "Type": "String"
@@ -251,7 +256,7 @@
         }
       ]
     },
-    "PreviousVersionAsgA": {
+    "UsePreviousAsgA": {
       "Fn::And": [
         {
           "Condition": "IsDeploying"
@@ -261,7 +266,7 @@
         }
       ]
     },
-    "PreviousVersionAsgB": {
+    "UsePreviousAsgB": {
       "Fn::And": [
         {
           "Condition": "IsDeploying"
@@ -473,7 +478,15 @@
           "Ref": "InstanceProfile"
         },
         "ImageId": {
-          "Ref": "ImageId"
+          "Fn::If": [
+            "UsePreviousAsgA",
+            {
+              "Ref": "PreviousImageId"
+            },
+            {
+              "Ref": "ImageId"
+            }
+          ]
         },
         "InstanceType": {
           "Ref": "InstanceType"
@@ -517,7 +530,7 @@
                 "\nexport VERSION=",
                 {
                   "Fn::If": [
-                    "PreviousVersionAsgA",
+                    "UsePreviousAsgA",
                     {
                       "Ref": "PreviousVersion"
                     },
@@ -638,8 +651,17 @@
         "IamInstanceProfile": {
           "Ref": "InstanceProfile"
         },
+        
         "ImageId": {
-          "Ref": "ImageId"
+          "Fn::If": [
+            "UsePreviousAsgB",
+            {
+              "Ref": "PreviousImageId"
+            },
+            {
+              "Ref": "ImageId"
+            }
+          ]
         },
         "InstanceType": {
           "Ref": "InstanceType"
@@ -683,7 +705,7 @@
                 "\nexport VERSION=",
                 {
                   "Fn::If": [
-                    "PreviousVersionAsgB",
+                    "UsePreviousAsgB",
                     {
                       "Ref": "PreviousVersion"
                     },
