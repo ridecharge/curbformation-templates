@@ -72,8 +72,7 @@
       "AllowedValues": [
         "True",
         "False"
-      ],
-      "Default": "False"
+      ]
     },
     "DeployedAsg": {
       "Type": "String",
@@ -81,8 +80,7 @@
       "AllowedValues": [
         "A",
         "B"
-      ],
-      "Default": "A"
+      ]
     },
     "Version": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
