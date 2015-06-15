@@ -16,6 +16,16 @@
       "Value": {
         "Ref": "PreviousVersion"
       }
+    },
+    "Deploying": {
+      "Value": {
+        "Ref": "Deploying"
+      }
+    },
+    "DeployedAsg": {
+      "Value": {
+        "Ref": "DeployedAsg"
+      }
     }
   },
   "Parameters": {
@@ -55,6 +65,24 @@
       "MaxLength": "8",
       "MinLength": "4",
       "Type": "String"
+    },
+    "Deploying": {
+      "Type": "String",
+      "Description": "Whether the deployment is currently in the deploying state",
+      "AllowedValues": [
+        "True",
+        "False"
+      ],
+      "Default": "False"
+    },
+    "DeployedAsg": {
+      "Type": "String",
+      "Description": "The AutoScalingGroup that is considered deployed.",
+      "AllowedValues": [
+        "A",
+        "B"
+      ],
+      "Default": "A"
     },
     "Version": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
@@ -105,6 +133,12 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "Deploying": {
+            "Ref": "Deploying"
+          },
+          "DeployedAsg": {
+            "Ref": "DeployedAsg"
+          },
           "DockerRepository": {
             "Ref": "DockerRepository"
           },
@@ -113,6 +147,9 @@
           },
           "ImageId": {
             "Ref": "Version"
+          },
+          "PreviousImageId": {
+            "Ref": "ImageId"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -223,14 +260,20 @@
           "AvailabilityZones": {
             "Ref": "AvailabilityZones"
           },
+          "Deploying": {
+            "Ref": "Deploying"
+          },
+          "DeployedAsg": {
+            "Ref": "DeployedAsg"
+          },
           "DockerRepository": {
             "Ref": "DockerRepository"
           },
           "Environment": {
             "Ref": "Environment"
           },
-          "ImageId": {
-            "Ref": "Version"
+          "PreviousImageId": {
+            "Ref": "ImageId"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
