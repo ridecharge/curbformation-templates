@@ -149,7 +149,7 @@
             "Ref": "Version"
           },
           "PreviousImageId": {
-            "Ref": "ImageId"
+            "Ref": "Version"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
@@ -272,8 +272,11 @@
           "Environment": {
             "Ref": "Environment"
           },
+          "ImageId": {
+            "Ref": "Version"
+          },
           "PreviousImageId": {
-            "Ref": "ImageId"
+            "Ref": "Version"
           },
           "InstanceProfile": {
             "Fn::GetAtt": [
