@@ -69,7 +69,8 @@
     "Deploying": {
       "Type": "String",
       "Description": "Whether the deployment is currently in the deploying state",
-      "AllowedValues": [
+     "Default": "False",
+     "AllowedValues": [
         "True",
         "False"
       ]
@@ -77,6 +78,7 @@
     "DeployedAsg": {
       "Type": "String",
       "Description": "The AutoScalingGroup that is considered deployed.",
+      "Default": "A",
       "AllowedValues": [
         "A",
         "B"
