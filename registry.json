@@ -70,7 +70,8 @@
     "PreviousBaseImageId": {
       "AllowedPattern": "ami-[a-z0-9]{8}",
       "ConstraintDescription": "Must be a valid ami id",
-      "Type": "String"
+      "Type": "String",
+      "Default": "ami-12345678"
     },
     "DockerRepository": {
       "Type": "String"
@@ -135,7 +136,8 @@
       "AllowedValues": [
         "True",
         "False"
-      ]
+      ],
+      "Default": "False"
     },
     "DeployedAsg": {
       "Type": "String",
@@ -143,7 +145,8 @@
       "AllowedValues": [
         "A",
         "B"
-      ]
+      ],
+      "Default": "A"
     }
   },
   "Conditions": {
