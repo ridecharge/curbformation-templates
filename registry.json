@@ -146,6 +146,16 @@
       ]
     }
   },
+  "Conditions": {
+    "CreateBuckets": {
+      "Fn::Equals": [
+        {
+          "Ref": "Environment"
+        },
+        "stage"
+      ]
+    }
+  },
   "Resources": {
     "AccessKeys": {
       "Properties": {
@@ -450,6 +460,7 @@
       "Type": "AWS::CloudFormation::Stack"
     },
     "StorageBuckets": {
+      "Condition": "CreateBuckets",
       "Properties": {
         "Parameters": {
           "ApplicationName": {
