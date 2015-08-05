@@ -109,6 +109,9 @@
           "ImageId": {
             "Ref": "Version"
           },
+          "PreviousImageId": {
+            "Ref": "Version"
+          },
           "InstanceProfile": {
             "Fn::GetAtt": [
               "InstanceProfile",
