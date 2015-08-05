@@ -4,7 +4,7 @@ CONTAINER=$(DOCKER_REPO)/curbformation-templates
 all: build push clean
 
 build:
-	docker build --pull --no-cache -t $(CONTAINER):latest . 
+	docker build -t $(CONTAINER):latest . 
 
 push:
 	docker push $(CONTAINER)
