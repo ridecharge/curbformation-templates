@@ -157,6 +157,9 @@
           "ImageId": {
             "Ref": "BaseImageId"
           },
+          "PreviousImageId": {
+            "Ref": "BaseImageId"
+          },
           "InstanceHealthCheck": "/v1/agent/self",
           "InstancePort": "8500",
           "InstanceProfile": {
