@@ -149,6 +149,9 @@
           "ImageId": {
             "Ref": "BaseImageId"
           },
+          "PreviousImageId": {
+            "Ref": "BaseImageId"
+          },
           "LogglyToken": {
             "Ref": "LogglyToken"
           },
@@ -218,6 +221,9 @@
             "Ref": "AvailabilityZones"
           },
           "ImageId": {
+            "Ref": "BaseImageId"
+          },
+          "PreviousImageId": {
             "Ref": "BaseImageId"
           },
           "LogglyToken": {
