@@ -161,6 +161,9 @@
           "ImageId": {
             "Ref": "BaseImageId"
           },
+          "PreviousImageId": {
+            "Ref": "BaseImageId"
+          },
           "InstanceHealthCheck": "/health",
           "InstancePort": "8080",
           "InstanceProfile": {
