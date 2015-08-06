@@ -138,6 +138,9 @@
     "Instances": {
       "Properties": {
         "Parameters": {
+          "PreviousImageId": { 
+            "Ref": "BaseImageId"
+          },
           "ApplicationName": {
             "Ref": "ApplicationName"
           },
